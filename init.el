@@ -513,6 +513,17 @@
 
 (use-package eglot)
 
+(use-package eldoc)
+
+(use-package sly
+  :hook
+  (lisp-mode . sly-editing-mode)
+  (lisp-mode . aggressive-indent-mode)
+  :config
+  (require 'sly-quicklisp)
+  (require 'sly-repl-ansi-color)
+  (require 'sly-asdf))
+
 ;; (use-package eglot-java
 ;;   :hook
 ;;   (java-mode . (lambda()
