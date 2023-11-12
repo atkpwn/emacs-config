@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: sync_with_stdio
+# key: sync
+# --
+std::ios::sync_with_stdio(false);
+$0
