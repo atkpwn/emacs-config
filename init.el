@@ -229,6 +229,9 @@
   :bind
   (("C-s"   . consult-line)
    ("C-x b" . consult-buffer)
+   ("C-c f" . consult-project-buffer)
+   ("C-c g" . consult-goto-line)
+   ("C-r"   . consult-ripgrep)
    :map minibuffer-local-map
    ("C-r" . consult-history))
   :config
@@ -302,10 +305,11 @@
 (use-package vertico
   :bind
   (:map vertico-map
-        ("C-n" . vertico-next)
-        ("C-p" . vertico-previous)
-        :map minibuffer-local-map
-        ("C-l" . backward-kill-word))
+   ("C-n" . vertico-next)
+   ("C-p" . vertico-previous)
+   ("C-j" . minibuffer-force-complete-and-exit)
+   :map minibuffer-local-map
+   ("C-l" . vertico-directory-delete-word))
   :custom
   (vertico-count  10)
   (vertico-resize nil)
