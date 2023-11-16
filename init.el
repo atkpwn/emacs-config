@@ -227,11 +227,12 @@
 
 (use-package consult
   :bind
-  (("C-s"   . consult-line)
-   ("C-x b" . consult-buffer)
-   ("C-c f" . consult-project-buffer)
-   ("C-c g" . consult-goto-line)
-   ("C-r"   . consult-ripgrep)
+  (("C-s"     . consult-line)
+   ("C-x b"   . consult-buffer)
+   ("C-c f"   . consult-project-buffer)
+   ("C-c g"   . consult-goto-line)
+   ("C-c r r" . consult-ripgrep)
+   ("C-c r f" . consult-fd)
    :map minibuffer-local-map
    ("C-r" . consult-history))
   :config
@@ -239,11 +240,14 @@
   (consult-customize consult-buffer
                      :preview-key "M-."))
 
+(use-package consult-project-extra)
+
 (use-package consult-dir
-  :bind (("C-x C-d" . consult-dir)
-         :map minibuffer-local-completion-map
-         ("C-x C-d" . consult-dir)
-         ("C-x C-j" . consult-dir-jump-file)))
+  :bind
+  (("C-x C-d" . consult-dir)
+   :map minibuffer-local-completion-map
+   ("C-x C-d" . consult-dir)
+   ("C-x C-j" . consult-dir-jump-file)))
 
 (use-package consult-dir-vertico
   :no-require t
@@ -324,6 +328,8 @@
           (cdr args)))
   :init
   (vertico-mode))
+
+(use-package vertico-directory)
 
 (use-package savehist
   :init
@@ -409,9 +415,10 @@
 (use-package treemacs-magit
   :after (treemacs magit))
 
-(use-package nerd-icons-dired
-  :hook
-  (dired-mode . nerd-icons-dired-mode))
+(use-package treemacs-nerd-icons
+  :disabled
+  :config
+  (treemacs-load-theme "nerd-icons"))
 
 (use-package dired
   :commands (dired dired-jump)
@@ -421,6 +428,10 @@
 
 (use-package dired-x
   :after dired)
+
+(use-package nerd-icons-dired
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
 
 (use-package yasnippet
   :demand
@@ -513,6 +524,42 @@
 
 (use-package eglot)
 
+(use-package go-mode)
+
+(use-package corfu
+  :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-popupinfo-delay '(0.5 . 0))
+  :init
+  (setq completion-cycle-threshold 3
+        tab-always-indent 'complete)
+  (global-corfu-mode)
+  (corfu-popupinfo-mode))
+
+(use-package dabbrev
+  ;; Swap M-/ and C-M-/
+  :bind
+  (("M-/"   . dabbrev-completion)
+   ("C-M-/" . dabbrev-expand))
+  ;; Other useful Dabbrev configurations
+  :custom
+  (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+
+(use-package nerd-icons-corfu
+  :custom
+  (corfu-right-margin-width 1)
+  :config
+  (require 'nerd-icons)
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+  (setq nerd-icons-corfu-mapping
+        '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
+          (boolean :style "cod" :icon "symbol_boolean" :face font-lock-builtin-face)
+          ;; ...
+          (t :style "cod" :icon "code" :face font-lock-warning-face)))
+  ;; Remember to add an entry for `t', the library uses that as default.
+  )
+
 (use-package eldoc)
 
 (use-package sly
@@ -524,14 +571,21 @@
   (require 'sly-repl-ansi-color)
   (require 'sly-asdf))
 
-;; (use-package eglot-java
-;;   :hook
-;;   (java-mode . (lambda()
-;;                  (setq-local tab-width 2)
-;;                  (setq-local c-basic-offset 2)
-;;                  (eglot-java-mode)
-;;                  ;; (eglot-ensure)
-;;                  )))
+(use-package eglot-java
+  :bind
+  (:map eglot-mode-map
+   ("C-c e f n" . flymake-goto-next-error)
+   ("C-c e f p" . flymake-goto-prev-error)
+   ("C-c e r"   . eglot-rename)
+   ("C-c e f r" . eglot-format)
+   ("C-c e f b" . eglot-format-buffer)
+   ("C-c e a" . eglot-code-actions))
+  :hook
+  (java-mode . eglot-java-mode)
+  (eglot-java . (lambda()
+                  (setq-local tab-width 2
+                              c-basic-offset 2)
+                  (eglot-ensure))))
 
 (use-package rust-mode
   :hook
