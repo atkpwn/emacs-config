@@ -44,7 +44,8 @@
 
 (use-package emacs
   :bind
-  ("s-u" . revert-buffer)
+  (("C-x f" . find-file-other-window)
+   ("s-u"   . revert-buffer))
   :hook
   (before-save . delete-trailing-whitespace)
   (after-save  . executable-make-buffer-file-executable-if-script-p)
@@ -119,7 +120,7 @@
   (setq default-frame-alist '(;; (undecorated           . t)
                               (alpha                 . (95 . 95))
                               (drag-internal-border  . t)
-                              (internal-border-width . 5)))
+                              (internal-border-width . 2)))
   (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
   :config
   (load-theme 'doom-tomorrow-night t))
@@ -165,13 +166,13 @@
   :diminish selected-minor-mode
   :bind
   (:map selected-keymap
-        ("[" . align-code)
-        ("f" . fill-region)
-        ("U" . unfill-region)
-        ("d" . downcase-region)
-        ("u" . upcase-region)
-        ("r" . reverse-region)
-        ("s" . sort-lines))
+   ("[" . align-code)
+   ("f" . fill-region)
+   ("U" . unfill-region)
+   ("d" . downcase-region)
+   ("u" . upcase-region)
+   ("r" . reverse-region)
+   ("s" . sort-lines))
   :hook
   (prog-mode    . selected-minor-mode)
   (text-mode . selected-minor-mode))
@@ -296,10 +297,10 @@
 
 (use-package marginalia
   ;; Either bind `marginalia-cycle' globally or only in the minibuffer
-  :bind (("M-A" . marginalia-cycle)
-         :map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
-
+  :bind
+  (("M-A" . marginalia-cycle)
+   :map minibuffer-local-map
+   ("M-A" . marginalia-cycle))
   ;; The :init configuration is always executed (Not lazy!)
   :config
   ;; Must be in the :init section of use-package such that the mode gets
@@ -311,7 +312,8 @@
   (:map vertico-map
    ("C-n" . vertico-next)
    ("C-p" . vertico-previous)
-   ("C-j" . minibuffer-force-complete-and-exit)
+   ;; ("C-j" . minibuffer-force-complete-and-exit)
+   ("C-j" . vertico-exit)
    :map minibuffer-local-map
    ("C-l" . vertico-directory-delete-word))
   :custom
@@ -582,7 +584,8 @@
   :hook
   (rust-mode . cargo-minor-mode))
 
-(use-package nix-mode)
+(use-package nix-mode
+  :mode "\\.nix\\'")
 
 (use-package tex-site
   :mode ("\\.tex\\'" . LaTeX-mode)
@@ -617,6 +620,12 @@
   :config
   (setq reftex-plug-into-AUCTeX t) ;; https://www.gnu.org/software/emacs/manual/html_node/reftex/AUCTeX_002dRefTeX-Interface.html
   (setq reftex-cite-prompt-optional-args t))
+
+(use-package json-mode
+  :mode "\\.json\\'")
+
+(use-package jq-format
+  :after json-mode)
 
 ;; Macintoch
 (setq mac-option-modifier 'super)
