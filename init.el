@@ -564,6 +564,16 @@
 
 (use-package eldoc)
 
+(use-package lisp-mode
+  :hook
+  (emacs-lisp-mode . (lambda ()
+                       (setq-local prettify-symbols-alist lisp--prettify-symbols-alist)
+                       (prettify-symbols-mode 1)))
+  :init
+  (defconst lisp--prettify-symbols-alist
+    '(("lambda"  . ?λ)
+      ("."       . ?•))))
+
 (use-package sly
   :hook
   (lisp-mode . sly-editing-mode)
