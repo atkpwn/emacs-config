@@ -103,9 +103,8 @@
   )
 
 (use-package no-littering
-  :custom
-  (custom-file (expand-file-name "custom.el" user-emacs-directory))
   :config
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (load custom-file t)
   (no-littering-theme-backups))
 
