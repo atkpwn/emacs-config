@@ -536,8 +536,6 @@
 
 (use-package eglot)
 
-(use-package go-mode)
-
 (use-package corfu
   :custom
   (corfu-cycle t)
@@ -608,6 +606,12 @@
                   (setq-local tab-width 2
                               c-basic-offset 2)
                   (eglot-ensure))))
+
+(use-package go-mode
+  :hook
+  (go-mode . (lambda ()
+               (eglot-ensure)
+               (add-hook 'before-save-hook eglot-format-buffer nil 'local))))
 
 (use-package rust-mode
   :hook
