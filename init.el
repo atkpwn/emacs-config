@@ -591,6 +591,27 @@
   (require 'sly-repl-ansi-color)
   (require 'sly-asdf))
 
+;; python setup
+;; https://gist.github.com/habamax/290cda0e0cdc6118eb9a06121b9bc0d7
+(use-package pyvenv
+  :hook
+  (python-mode . pyvenv-mode)
+  (python-mode . pyvenv-tracking-mode)
+  (python-mode . (lambda ()
+                   (eldoc-mode)
+                   (eglot-ensure)))
+  :custom
+  (pyvenv-default-virtual-env-name "venv")
+  (python-indent-guess-indent-offset-verbose nil)
+  :config
+  (add-hook 'pyvenv-post-activate-hooks #'pyvenv-restart-python)
+  (setq major-mode-remap-alist
+        '((python-mode . python-ts-mode))))
+
+(use-package blacken
+  :hook
+  (python-mode . blacken-mode))
+
 (use-package go-mode
   :hook
   (go-mode . (lambda ()
