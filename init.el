@@ -385,7 +385,18 @@
 (use-package magit
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
-  (transient-default-level 5))
+  (transient-default-level 5)
+  :config
+  ;; from https://emacs.stackexchange.com/a/43975
+  (transient-define-suffix magit-submodule-update-all ()
+    "Update all submodules"
+    :description "Update all     git submodule update --init --recursive"
+    (interactive)
+    (magit-with-toplevel
+      (magit-run-git-async "submodule" "update" "--init" "--recursive")))
+
+  (transient-append-suffix 'magit-submodule "u"
+    '("U" magit-submodule-update-all)))
 
 (use-package magit-delta
   :hook
