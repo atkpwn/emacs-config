@@ -536,8 +536,6 @@
 
 (use-package eglot)
 
-(use-package go-mode)
-
 (use-package corfu
   :custom
   (corfu-cycle t)
@@ -592,6 +590,12 @@
   (require 'sly-quicklisp)
   (require 'sly-repl-ansi-color)
   (require 'sly-asdf))
+
+(use-package go-mode
+  :hook
+  (go-mode . (lambda ()
+               (eglot-ensure)
+               (add-hook 'before-save-hook eglot-format-buffer nil 'local))))
 
 (use-package rust-mode
   :hook
