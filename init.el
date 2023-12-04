@@ -179,8 +179,8 @@
 (use-package multiple-cursors
   :after selected
   :bind
-  (("<C-c> m c" . mc/edit-lines)
-   ("<C-c> m n" . mc/insert-numbers)
+  (("C-c m c" . mc/edit-lines)
+   ("C-c m n" . mc/insert-numbers)
    :map selected-keymap
    ("c"   . mc/edit-lines)
    ("."   . mc/mark-next-like-this)
