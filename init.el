@@ -351,12 +351,16 @@
 (use-package rg)
 
 (use-package paren
+  :hook
+  (prog-mode . electric-pair-local-mode)
+  (conf-mode . electric-pair-local-mode)
+  (json-mode . electric-pair-local-mode)
   :custom
   (show-paren-priority -1)
   :config
-  (electric-pair-mode 1) ; auto-insert matching bracket
   (show-paren-mode t)
   (add-hook 'after-save-hook 'check-parens nil t)
+
   (setq show-paren-delay 0)
   (set-face-foreground 'show-paren-match "#dfd")
   (set-face-attribute  'show-paren-match nil :weight 'extra-bold)
