@@ -208,6 +208,11 @@
   :custom
   (avy-keys (number-sequence ?a ?z)))
 
+(use-package avy-zap
+  :bind
+  (("M-z" . avy-zap-up-to-char-dwim)
+   ("M-Z" . avy-zap-to-char-dwim)))
+
 (use-package avy-embark
   :no-require t
   :after
