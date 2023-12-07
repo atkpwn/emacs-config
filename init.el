@@ -646,6 +646,24 @@
   :hook
   (python-mode . blacken-mode))
 
+(use-package cmake-mode
+  :mode ("CMakeLists.txt" "\\.cmake\\'"))
+
+(use-package cmake-font-lock
+  :hook
+  (cmake-mode . cmake-font-lock-activate))
+
+(use-package cc-mode
+  :hook
+  ((c-mode c++-mode) . (lambda ()
+                         (eglot-ensure)
+                         (setq-local cpp-format-on-save-p t)
+                         (add-hook 'before-save-hook #'cpp-format nil t)))
+  :config
+  (defun cpp-format ()
+    (if cpp-format-on-save-p
+        (eglot-format-buffer))))
+
 (use-package go-mode
   :hook
   (go-mode . (lambda ()
