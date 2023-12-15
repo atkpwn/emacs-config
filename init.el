@@ -11,7 +11,10 @@
            suffix))
 
 (add-hook 'after-init-hook
-          #'(lambda () (report-time-since-load " [after-init]"))
+          #'(lambda ()
+              (report-time-since-load " [after-init]")
+              ;; see https://karthinks.com/software/it-bears-repeating/
+              (repeat-mode))
           t)
 
 (eval-and-compile
@@ -27,8 +30,6 @@
 ;; from readme
 (eval-when-compile
   (require 'use-package))
-(use-package diminish)
-(use-package bind-key)
 
 ;; from jwiegley
 (setq use-package-verbose            init-file-debug
@@ -42,65 +43,73 @@
     (setplist sym (use-package-plist-delete
                    (symbol-plist sym) 'byte-obsolete-info))))
 
-(use-package emacs
-  :bind
-  (("C-x f" . find-file-other-window)
-   ("s-u"   . revert-buffer))
-  :hook
-  (before-save . delete-trailing-whitespace)
-  (after-save  . executable-make-buffer-file-executable-if-script-p)
-  :custom
-  (global-auto-revert-non-file-buffers t)
-  (auto-hscroll-mode       'current-line)
-  (auto-save-interval                 64)
-  (auto-save-timeout                   2)
-  (enable-recursive-minibuffers        t)
-  (fill-column                       100)
-  (history-delete-duplicates           t)
-  (history-length                    200)
-  (kill-do-not-save-duplicates         t)
-  (load-prefer-newer                   t)
-  (require-final-newline               t)
+(use-package bind-key)
 
+  (use-package emacs
+    :bind
+    (("C-x f" . find-file-other-window)
+     ("s-u"   . revert-buffer))
+    :hook
+    (before-save . delete-trailing-whitespace)
+    (after-save  . executable-make-buffer-file-executable-if-script-p)
+    :custom
+    (global-auto-revert-non-file-buffers t)
+    (auto-hscroll-mode       'current-line)
+    (auto-save-interval                 64)
+    (auto-save-timeout                   2)
+    (enable-recursive-minibuffers        t)
+    (fill-column                       100)
+    (history-delete-duplicates           t)
+    (history-length                    200)
+    (kill-do-not-save-duplicates         t)
+    (load-prefer-newer                   t)
+    (require-final-newline               t)
+
+    :config
+    (global-auto-revert-mode 1)
+    ;; (delete-selection-mode)
+    (setq-default indent-tabs-mode nil)
+    (setq-default buffer-file-coding-system 'utf-8-unix)
+    (setq-default tab-width 2)
+    (setq scroll-conservatively 10000
+          scroll-preserve-screen-position t)
+
+    (if (boundp 'use-short-answers)
+      (setq use-short-answers t)
+      (advice-add 'yes-or-no-p :override #'y-or-n-p))
+
+    ;; menu bar & tool bar & Bell
+    (tool-bar-mode   -1)
+    (scroll-bar-mode -1)
+
+    (setq frame-resize-pixelwise t)
+    (when (and (fboundp 'menu-bar-mode)
+               (not (eq system-type 'darwin)))
+      (menu-bar-mode -1)
+      (global-set-key [f10] 'menu-bar-mode)
+      (unbind-key "M-`"))
+
+    ;; bell
+    (setq visible-bell nil
+          ring-bell-function '(lambda ()
+                                (invert-face 'mode-line)
+                                (run-with-timer 0.1 nil #'invert-face 'mode-line)))
+
+    ;; undo-tree
+    (global-undo-tree-mode)
+
+    (set-register ?i (cons 'file (emacs-path "init.org")))
+    (setq nix-configuration-file (expand-file-name "/sudo::/etc/nixos/configuration.nix"))
+    (set-register ?c (cons 'file nix-configuration-file))
+    (set-register ?h (cons 'file (expand-file-name "~/.config/home-manager/programs.nix")))
+    (set-register ?t (cons 'file (expand-file-name "~/orgfiles/todo.org")))
+    )
+
+(use-package which-key
+  :demand t
+  :diminish
   :config
-  (global-auto-revert-mode 1)
-  (delete-selection-mode)
-  (setq-default indent-tabs-mode nil)
-  (setq-default buffer-file-coding-system 'utf-8-unix)
-  (setq-default tab-width 2)
-  (setq scroll-conservatively 10000
-        scroll-preserve-screen-position t)
-
-  (if (boundp 'use-short-answers)
-    (setq use-short-answers t)
-    (advice-add 'yes-or-no-p :override #'y-or-n-p))
-
-  ;; menu bar & tool bar & Bell
-  (tool-bar-mode   -1)
-  (scroll-bar-mode -1)
-
-  (setq frame-resize-pixelwise t)
-  (when (and (fboundp 'menu-bar-mode)
-             (not (eq system-type 'darwin)))
-    (menu-bar-mode -1)
-    (global-set-key [f10] 'menu-bar-mode)
-    (unbind-key "M-`"))
-
-  ;; bell
-  (setq visible-bell nil
-        ring-bell-function '(lambda ()
-                              (invert-face 'mode-line)
-                              (run-with-timer 0.1 nil #'invert-face 'mode-line)))
-
-  ;; undo-tree
-  (global-undo-tree-mode)
-
-  (set-register ?i (cons 'file (emacs-path "init.el")))
-  (setq nix-configuration-file (expand-file-name "/sudo::/etc/nixos/configuration.nix"))
-  (set-register ?c (cons 'file nix-configuration-file))
-  (set-register ?h (cons 'file (expand-file-name "~/.config/home-manager/programs.nix")))
-  (set-register ?t (cons 'file (expand-file-name "~/orgfiles/todo.org")))
-  )
+  (which-key-mode))
 
 (use-package no-littering
   :config
@@ -113,6 +122,8 @@
   :config
   (add-to-list 'recentf-exclude no-littering-var-directory)
   (add-to-list 'recentf-exclude no-littering-etc-directory))
+
+(use-package diminish)
 
 (use-package doom-themes
   :init
@@ -127,6 +138,7 @@
 (use-package doom-modeline
   :init
   (doom-modeline-mode 1)
+  (column-number-mode)
   :custom
   (doom-modeline-buffer-file-name-style 'truncate-upto-project))
 
@@ -136,8 +148,9 @@
 
 (use-package display-line-numbers
   :hook
-  ((conf-mode prog-mode) . display-line-numbers-mode)
-  (org-mode              . (lambda () (display-line-numbers-mode -1)))
+  (prog-mode . display-line-numbers-mode)
+  (conf-mode . display-line-numbers-mode)
+  (org-mode  . (lambda () (display-line-numbers-mode -1)))
   :custom
   (display-line-numbers-grow-only   t)
   (display-line-numbers-type        t)
@@ -146,19 +159,6 @@
 (use-package dashboard
   :config
   (dashboard-setup-startup-hook))
-
-(use-package which-key
-  :demand t
-  :diminish
-  :config
-  (which-key-mode))
-
-(use-package ace-window
-  :diminish
-  :bind
-  ("C-x q" . ace-window)
-  :config
-  (setq aw-keys '(?j ?k ?l ?\; ?a ?s ?d ?f)))
 
 (use-package selected
   :demand t
@@ -173,7 +173,7 @@
    ("r" . reverse-region)
    ("s" . sort-lines))
   :hook
-  (prog-mode    . selected-minor-mode)
+  (prog-mode . selected-minor-mode)
   (text-mode . selected-minor-mode))
 
 (use-package multiple-cursors
@@ -213,23 +213,6 @@
   (("M-z" . avy-zap-up-to-char-dwim)
    ("M-Z" . avy-zap-to-char-dwim)))
 
-(use-package avy-embark
-  :no-require t
-  :after
-  (avy embark)
-  :preface
-  (defun avy-action-embark (pt)
-    (require 'embark
-    (unwind-protect
-        (save-excursion
-          (goto-char pt)
-          (embark-act))
-      (select-window
-       (cdr (ring-ref avy-ring 0))))
-    t))
-  :config
-  (setf (alist-get ?. avy-dispatch-alist) 'avy-action-embark))
-
 (use-package consult
   :bind
   (("C-s"     . consult-line)
@@ -264,17 +247,6 @@
         ("M-g d"   . consult-dir)
         ("M-s f"   . consult-dir-jump-file)))
 
-(use-package marginalia
-  :config
-  (marginalia-mode))
-
-(use-package nerd-icons-completion
-  :after marginalia
-  :hook
-  (marginalia-mode . nerd-icons-completion-marginalia-setup)
-  :config
-  (nerd-icons-completion-mode))
-
 (use-package embark
   :bind
   (("C-'"   . embark-act)       ;; pick some comfortable binding
@@ -295,6 +267,23 @@
                  (window-parameters (mode-line-format . none))))
   (add-to-list 'embark-keymap-alist '(tab . embark-tab-actions)))
 
+(use-package avy-embark
+  :no-require t
+  :after
+  (avy embark)
+  :preface
+  (defun avy-action-embark (pt)
+    (require 'embark
+    (unwind-protect
+        (save-excursion
+          (goto-char pt)
+          (embark-act))
+      (select-window
+       (cdr (ring-ref avy-ring 0))))
+    t))
+  :config
+  (setf (alist-get ?. avy-dispatch-alist) 'avy-action-embark))
+
 (use-package embark-consult
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
@@ -311,15 +300,22 @@
   ;; enabled right away. Note that this forces loading the package.
   (marginalia-mode))
 
+(use-package nerd-icons-completion
+  :after marginalia
+  :hook
+  (marginalia-mode . nerd-icons-completion-marginalia-setup)
+  :config
+  (nerd-icons-completion-mode))
+
 (use-package vertico
   :bind
   (:map vertico-map
-   ("C-n" . vertico-next)
-   ("C-p" . vertico-previous)
-   ;; ("C-j" . minibuffer-force-complete-and-exit)
-   ("C-j" . vertico-exit)
-   :map minibuffer-local-map
-   ("C-l" . vertico-directory-delete-word))
+        ("C-n" . vertico-next)
+        ("C-p" . vertico-previous)
+        ;; ("C-j" . minibuffer-force-complete-and-exit)
+        ("C-j" . vertico-exit)
+        :map minibuffer-local-map
+        ("C-l" . vertico-directory-delete-word))
   :custom
   (vertico-count  10)
   (vertico-resize nil)
@@ -346,9 +342,8 @@
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults  nil)
-  (completion-category-overrides '((file (styles basic partial-completion)))))
-
-(use-package rg)
+  (completion-category-overrides '((file (styles basic partial-completion))
+                                   (eglot (styles . (orderless flex))))))
 
 (use-package paren
   :hook
@@ -371,25 +366,6 @@
 (use-package rainbow-delimiters
   :hook
   (prog-mode . rainbow-delimiters-mode))
-
-(use-package unfill
-  :bind
-  ("M-Q" . unfill-paragraph))
-
-(use-package prog-mode
-  :hook
-  (prog-mode . set-highlight-keywords)
-  :config
-  (defvar font-lock-todo-face 'font-lock-todo-face
-    "Face name to use for TODOs.")
-  (defface font-lock-todo-face
-    '((t :foreground "#ff3a11" :weight bold))
-    "Font Lock mode face used to highlight TODOs."
-    :group 'font-lock-faces)
-  (defun set-highlight-keywords ()
-    (font-lock-add-keywords
-     nil
-     '(("\\(FIX\\|FIXME\\|NOTE\\|TODO\\|WARNING\\|!!!\\):" 1 font-lock-todo-face t)))))
 
 (use-package magit
   :custom
@@ -475,9 +451,15 @@
   :init
   (persp-mode))
 
-;; ** Window control
-;; *** Toggle split window
-;;     The following code is taken from this [[https://emacs.stackexchange.com/a/5372][answer]] by [[https://emacs.stackexchange.com/users/253/dan][Dan]] on StackExchange.
+(use-package ace-window
+  :diminish
+  :bind
+  (("C-x q"   . ace-window)
+   ("C-x C-o" . ace-swap-window))
+  :config
+  (setq aw-keys '(?j ?k ?l ?\; ?a ?s ?d ?f)))
+
+;; Taken from this [[https://emacs.stackexchange.com/a/5372][answer]] by [[https://emacs.stackexchange.com/users/253/dan][Dan]] on StackExchange.
 (defun window-split-toggle ()
   "Toggle between horizontal and vertical split with two windows."
   (interactive)
@@ -493,8 +475,7 @@
         (switch-to-buffer (other-buffer))))))
 (global-set-key (kbd "C-x %") 'window-split-toggle)
 
-;; *** Toggle full screen
-;;     From [[https://www.emacswiki.org/emacs/FullScreen#h5o-27][EmacsWiki]].
+;; From [[https://www.emacswiki.org/emacs/FullScreen#h5o-27][EmacsWiki]].
 (defun toggle-fullscreen ()
   "Toggle full screen"
   (interactive)
@@ -503,8 +484,7 @@
    (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
 (global-set-key (kbd "C-S-f") 'toggle-fullscreen)
 
-;; *** Save window configuration
-;;    The configuration here is (again) from John Wiegley's [[https://github.com/jwiegley/dot-emacs/blob/master/init.org#push-and-pop-window-configurations]].
+;; Again from John Wiegley's [[https://github.com/jwiegley/dot-emacs/blob/master/init.org#push-and-pop-window-configurations]].
 (defvar saved-window-configuration nil)
 
 (defun push-window-configuration ()
@@ -543,9 +523,16 @@
     (add-hook 'text-mode-hook #'flyspell-mode)
     (add-hook 'prog-mode-hook #'flyspell-prog-mode)))
 
+(use-package rg)
+
+(use-package unfill
+  :bind
+  ("M-Q" . unfill-paragraph))
+
 (use-package eglot)
 
 (use-package project
+  :disabled
   :config
   ;; from https://gist.github.com/pesterhazy/e8e445e6715f5d8bae3c62bc9db32469
   (setq project-sentinels '("package.json" ".project.el"))
@@ -573,13 +560,25 @@
 (use-package corfu
   :custom
   (corfu-cycle t)
-  (corfu-auto t)
+  (corfu-auto  t)
   (corfu-popupinfo-delay '(0.5 . 0))
+  (completion-cycle-threshold 3)
+  (tab-always-indent 'complete)
   :init
-  (setq completion-cycle-threshold 3
-        tab-always-indent 'complete)
   (global-corfu-mode)
   (corfu-popupinfo-mode))
+
+(use-package nerd-icons-corfu
+  :custom
+  (corfu-right-margin-width 1)
+  :init
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+  (setq nerd-icons-corfu-mapping
+        '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
+          (boolean :style "cod" :icon "symbol_boolean" :face font-lock-builtin-face)
+          ;; ...
+          ;; Remember to add an entry for `t', the library uses that as default.
+          (t :style "cod" :icon "code" :face font-lock-warning-face))))
 
 (use-package dabbrev
   ;; Swap M-/ and C-M-/
@@ -590,31 +589,38 @@
   :custom
   (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
 
-(use-package nerd-icons-corfu
-  :custom
-  (corfu-right-margin-width 1)
-  :config
-  (require 'nerd-icons)
-  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
-  (setq nerd-icons-corfu-mapping
-        '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
-          (boolean :style "cod" :icon "symbol_boolean" :face font-lock-builtin-face)
-          ;; ...
-          (t :style "cod" :icon "code" :face font-lock-warning-face)))
-  ;; Remember to add an entry for `t', the library uses that as default.
-  )
-
 (use-package eldoc)
+
+(use-package markdown-mode) ;; required to display eldoc properly
+
+;; TODO: cape
+
+(use-package prog-mode
+  :hook
+  (prog-mode . set-highlight-keywords)
+  (conf-mode . set-highlight-keywords)
+  :config
+  (defvar font-lock-todo-face 'font-lock-todo-face
+    "Face name to use for TODOs.")
+  (defface font-lock-todo-face
+    '((t :foreground "#ff3a11" :weight bold))
+    "Font Lock mode face used to highlight TODOs."
+    :group 'font-lock-faces)
+  (defun set-highlight-keywords ()
+    (font-lock-add-keywords
+     nil
+     '(("\\(FIX\\|FIXME\\|NOTE\\|TODO\\|WARNING\\|!!!\\):" 1 font-lock-todo-face t)))))
 
 (use-package lisp-mode
   :hook
   (emacs-lisp-mode . (lambda ()
-                       (setq-local prettify-symbols-alist lisp--prettify-symbols-alist)
-                       (prettify-symbols-mode 1)))
+                       (setq prettify-symbols-alist lisp--prettify-symbols-alist)
+                       (eldoc-mode)))
   :init
   (defconst lisp--prettify-symbols-alist
     '(("lambda"  . ?λ)
-      ("."       . ?•))))
+      ("."       . ?•)))
+  (global-prettify-symbols-mode))
 
 (use-package sly
   :hook
@@ -625,8 +631,11 @@
   (require 'sly-repl-ansi-color)
   (require 'sly-asdf))
 
-;; python setup
-;; https://gist.github.com/habamax/290cda0e0cdc6118eb9a06121b9bc0d7
+(use-package nix-mode
+  :mode "\\.nix\\'"
+  :hook
+  (nix-mode . eglot-ensure))
+
 (use-package pyvenv
   :hook
   (python-mode . pyvenv-mode)
@@ -668,27 +677,47 @@
   :hook
   (go-mode . (lambda ()
                (eglot-ensure)
-               (add-hook 'before-save-hook eglot-format-buffer nil 'local))))
+               (add-hook 'before-save-hook #'eglot-format-buffer nil t)))
+  :config
+  (setq project-vc-extra-root-markers '(".project.el")))
 
 (use-package rust-mode
   :hook
   (rust-mode . prettify-symbols-mode)
-  (rust-mode . eglot-ensure)
+  (rust-mode . (lambda ()
+                 (eglot-ensure)
+                 (setq indent-tabs-mode nil)))
   :config
+  (setq project-vc-extra-root-markers '(".project.el"))
+  ;; (add-to-list 'eglot-server-programs
+  ;;              `(rust-ts-mode . ("rust-analyzer" :initializationOptions
+  ;;                                ( :procMacro (:enable t)
+  ;;                                  :cargo ( :buildScripts (:enable t)
+  ;;                                           :features "all")))))
+  (push '(rust-mode . rust-ts-mode) major-mode-remap-alist)
   (setq rust-format-on-save t))
 
 (use-package cargo-mode
   :hook
-  (rust-mode . cargo-minor-mode))
+  (rust-mode . cargo-minor-mode)
+  :bind
+  (:map cargo-mode-map
+        ("C-c C-c r" . cargo-process-run)))
 
-(use-package nix-mode
-  :mode "\\.nix\\'")
+(use-package typescript-ts-mode
+  :mode
+  (("\\.ts\\'"  . typescript-ts-mode)
+   ("\\.tsx\\'" . tsx-ts-mode))
+  :hook
+  (typescript-ts-mode . eglot-ensure)
+  :config
+  (push '(typescript-mode . typescript-ts-mode) major-mode-remap-alist))
 
 (use-package tex-site
   :mode ("\\.tex\\'" . LaTeX-mode)
   :hook
   (LaTeX-mode . (lambda ()
-                  (smartparens-mode)
+                  ;; (smartparens-mode) ;; TODO: needed?
                   (prettify-symbols-mode 1)
                   (display-line-numbers-mode)
                   (visual-line-mode)
@@ -724,7 +753,51 @@
 (use-package jq-format
   :after json-mode)
 
-;; Macintoch
+(use-package yaml-ts-mode
+  :mode ("\\.yml\\'" "\\.yaml\\'")
+  :config
+  (push '(yaml-mode . yaml-ts-mode) major-mode-remap-alist))
+
+(use-package dockerfile-mode
+  :mode "/Dockerfile")
+
+(use-package terraform-mode
+  :mode "\\.tf\\'"
+  :custom
+  (terraform-indent-level 2)
+  :hook
+  (terraform-mode . eglot-ensure)
+  (terraform-mode . outline-minor-mode))
+
+(use-package org-config)
+
+(use-package elfeed
+  :commands elfeed
+  :config
+  (setq elfeed-feeds
+        '(("http://www.howardism.org/index.xml" emacs)
+          ("https://tsdh.org/rss.xml" emacs dev)
+          ("http://sachachua.com/blog/category/emacs-news/feed" emacs)
+          ("http://www.masteringemacs.org/feed" emacs)
+          ("http://emacsredux.com/atom.xml" emacs)
+          ("https://planet.emacslife.com/atom.xml" emacs)
+          ("https://karthinks.com/index.xml" emacs)
+          ("https://themkat.net/feed.xml" emacs dev)
+          ("https://cestlaz.github.io/rss.xml" emacs dev)
+
+          ("https://brandur.org/articles.atom" go database dev)
+          ("https://nipafx.dev/feed.xml" java dev)
+          ("https://vogella.com/blog/feed.xml" java dev)
+          ("https://belief-driven-design.com/posts/index.xml" java dev)
+          ("https://fzakaria.com/feed.xml" nix java dev)
+
+          ("https://eclecticlight.co/mac-problem-solving/feed" macs dev)
+
+          ("view-source:https://www.tweag.io/rss.xml" nix dev)
+
+          ("https://waylonwalker.com/archive/rss.xml" tmux dev)
+          )))
+
 (setq mac-option-modifier 'super)
 (setq mac-command-modifier 'meta)
 (global-unset-key (kbd "s-q"))
