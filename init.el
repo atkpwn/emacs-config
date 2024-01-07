@@ -684,27 +684,30 @@
    ("C-c e f b" . eglot-format-buffer)
    ("C-c e a"   . eglot-code-actions))
   :hook
-  (java-mode . eglot-java-mode)
+  (java-ts-mode . eglot-java-mode)
   (eglot-java . (lambda()
                   (setq-local tab-width      2
                               c-basic-offset 2)
                   (subword-mode)
-                  (eglot-ensure))))
+                  (eglot-ensure)))
+  :config
+  (push '(java-mode . java-ts-mode) major-mode-remap-alist))
 
 (use-package go-mode
   :hook
-  (go-mode . (lambda ()
+  (go-ts-mode . (lambda ()
                (eglot-ensure)
                (add-hook 'before-save-hook #'eglot-format-buffer nil t)))
   :config
-  (setq project-vc-extra-root-markers '(".project.el")))
+  (setq project-vc-extra-root-markers '(".project.el"))
+  (push '(go-mode . go-ts-mode) major-mode-remap-alist))
 
 (use-package rust-mode
   :hook
-  (rust-mode . prettify-symbols-mode)
-  (rust-mode . (lambda ()
-                 (eglot-ensure)
-                 (setq indent-tabs-mode nil)))
+  (rust-ts-mode . prettify-symbols-mode)
+  (rust-ts-mode . (lambda ()
+                    (eglot-ensure)
+                    (setq indent-tabs-mode nil)))
   :config
   (setq project-vc-extra-root-markers '(".project.el"))
   ;; (add-to-list 'eglot-server-programs
@@ -724,7 +727,8 @@
 
 (use-package typescript-ts-mode
   :mode
-  (("\\.ts\\'"  . typescript-ts-mode)
+  (("\\.js\\'"  . typescript-ts-mode)
+   ("\\.ts\\'"  . typescript-ts-mode)
    ("\\.tsx\\'" . tsx-ts-mode))
   :hook
   (typescript-ts-mode . eglot-ensure)
