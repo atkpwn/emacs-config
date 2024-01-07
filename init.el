@@ -174,6 +174,7 @@
    ("s" . sort-lines))
   :hook
   (prog-mode . selected-minor-mode)
+  (conf-mode . selected-minor-mode)
   (text-mode . selected-minor-mode))
 
 (use-package multiple-cursors
