@@ -776,7 +776,13 @@
   :commands elfeed
   :config
   (setq elfeed-feeds
-        '(("http://www.howardism.org/index.xml" emacs)
+        '(("https://allthingsdistributed.com/atom.xml" aws dev)
+          ("https://www.breakds.org/index.xml" nix c++ dev)
+          ("https://blog.alexellis.io/rss/" github dev)
+          ("https://blog.colinbreck.com/rss/" kubernetes dev)
+          ("https://corrode.dev/rss.xml" rust dev)
+
+          ("http://www.howardism.org/index.xml" emacs)
           ("https://tsdh.org/rss.xml" emacs dev)
           ("http://sachachua.com/blog/category/emacs-news/feed" emacs)
           ("http://www.masteringemacs.org/feed" emacs)
@@ -794,7 +800,7 @@
 
           ("https://eclecticlight.co/mac-problem-solving/feed" macs dev)
 
-          ("view-source:https://www.tweag.io/rss.xml" nix dev)
+          ("https://www.tweag.io/rss.xml" nix dev)
 
           ("https://waylonwalker.com/archive/rss.xml" tmux dev)
           )))
