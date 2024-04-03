@@ -418,18 +418,67 @@
   :config
   (treemacs-load-theme "nerd-icons"))
 
-(use-package dired
-  :commands (dired dired-jump)
-  :bind
-  (:map dired-mode-map
-        ("C-j" . dired-find-file)))
+(use-package pdf-tools
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  )
 
-(use-package dired-x
-  :after dired)
+(use-package dirvish
+  :init
+  (dirvish-override-dired-mode)
+  :custom
+  (dirvish-hide-details nil)
+  (dirvish-mode-line-format
+   '(:left (sort symlink) :right (omit yank index)))
+  ;; (dirvish-mode-line-height 10)
+  (dirvish-attributes
+   '(nerd-icons file-time file-size collapse subtree-state vc-state git-msg))
+  (dirvish-subtree-state-style 'nerd)
+  (dired-listing-switches
+   "-l --almost-all --human-readable -o --group-directories-first --no-group")
 
-(use-package nerd-icons-dired
-  :hook
-  (dired-mode . nerd-icons-dired-mode))
+  :config
+  (dirvish-peek-mode) ; Preview files in minibuffer
+  (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
+
+  (setq delete-by-moving-to-trash t)
+  (setq dirvish-path-separators (list
+                                 (format "  %s " (nerd-icons-codicon "nf-cod-home"))
+                                 (format "  %s " (nerd-icons-codicon "nf-cod-root_folder"))
+                                 (format " %s " (nerd-icons-faicon "nf-fa-angle_right"))))
+
+  ;; mouse settings
+  (setq dired-mouse-drag-files t)
+  (setq mouse-drag-and-drop-region-cross-program t)
+  (setq mouse-1-click-follows-link nil)
+  (define-key dirvish-mode-map (kbd "<mouse-1>") 'dirvish-subtree-toggle-or-open)
+  (define-key dirvish-mode-map (kbd "<mouse-2>") 'dired-mouse-find-file-other-window)
+  (define-key dirvish-mode-map (kbd "<mouse-3>") 'dired-mouse-find-file)
+
+  (add-to-list 'dirvish-open-with-programs
+               '(("pdf") . ("evince" "%f")))
+
+  :bind ; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
+  (("C-c f" . dirvish-fd)
+   :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
+   ("a"   . dirvish-quick-access)
+   ("f"   . dirvish-file-info-menu)
+   ("y"   . dirvish-yank-menu)
+   ("N"   . dirvish-narrow)
+   ("^"   . dired-up-directory)
+   ("["   . dirvish-history-last)
+   ("h"   . dirvish-history-jump) ; remapped `describe-mode'
+   ("s"   . dirvish-quicksort)    ; remapped `dired-sort-toggle-or-edit'
+   ("v"   . dirvish-vc-menu)      ; remapped `dired-view-file'
+   ("TAB" . dirvish-subtree-toggle)
+   ("M-f" . dirvish-history-go-forward)
+   ("M-b" . dirvish-history-go-backward)
+   ("M-l" . dirvish-ls-switches-menu)
+   ("M-m" . dirvish-mark-menu)
+   ("M-t" . dirvish-layout-toggle)
+   ("M-s" . dirvish-setup-menu)
+   ("M-e" . dirvish-emerge-menu)
+   ("M-j" . dirvish-fd-jump))
+  )
 
 (use-package yasnippet
   :demand
@@ -506,11 +555,6 @@
   ("C-x C-z" . zoom-window-zoom)
   :custom
   (zoom-window-mode-line-color "#3a4a50"))
-
-(use-package openwith
-  :config
-  (openwith-mode t)
-  (setq openwith-associations '(("\\.pdf\\'" "evince" (file)))))
 
 (use-package winner
   :bind
