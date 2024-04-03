@@ -60,7 +60,7 @@
       (use-package emacs
         :bind
         (("C-x f" . find-file-other-window)
-         ("s-u"   . revert-buffer))
+         ("s-y"   . revert-buffer))
         :hook
         (before-save . delete-trailing-whitespace)
         (after-save  . executable-make-buffer-file-executable-if-script-p)
@@ -166,9 +166,10 @@
 
     (use-package display-line-numbers
       :hook
-      (prog-mode . display-line-numbers-mode)
-      (conf-mode . display-line-numbers-mode)
-      (org-mode  . (lambda () (display-line-numbers-mode -1)))
+      (prog-mode    . display-line-numbers-mode)
+      (conf-mode    . display-line-numbers-mode)
+      (yaml-ts-mode . display-line-numbers-mode)
+      (org-mode     . (lambda () (display-line-numbers-mode -1)))
       :custom
       (display-line-numbers-grow-only   t)
       (display-line-numbers-type        t)
@@ -756,6 +757,25 @@
        (require 'sly-quicklisp)
        (require 'sly-repl-ansi-color)
        (require 'sly-asdf))
+   #+end_src
+
+** Clojure
+   #+begin_src emacs-lisp
+     (use-package clojure-ts-mode
+       :no-require t)
+
+     (use-package cider
+       :no-require t)
+
+     (use-package clj-refactor
+       :no-require t
+       :hook
+       (clojure-ts-mode . (lambda ()
+                            (clj-refactor-mode 1)
+                            (cljr-add-keybindings-with-prefix "C-c r"))))
+
+     (use-package flycheck-clojure
+       :no-require t)
    #+end_src
 
 ** Nix
