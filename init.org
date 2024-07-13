@@ -985,13 +985,27 @@
               ("https://vogella.com/blog/feed.xml" java dev)
               ("https://belief-driven-design.com/posts/index.xml" java dev)
               ("https://fzakaria.com/feed.xml" nix java dev)
+              ("https://joshaustin.tech/index.xml" java dev)
 
               ("https://eclecticlight.co/mac-problem-solving/feed" macs dev)
 
               ("https://www.tweag.io/rss.xml" nix dev)
 
               ("https://waylonwalker.com/archive/rss.xml" tmux dev)
+              ("https://martinfowler.com/feed.atom" dev architecture)
+
+              ("https://lisyarus.github.io/blog/feed.xml" dev gamedev math)
               )))
+
+    (use-package elfeed-webkit
+      :demand
+      :init
+      (setq elfeed-webkit-auto-tags '(webkit comics))
+      :config
+      (elfeed-webkit-auto-enable-by-tag)
+      :bind
+      (:map elfeed-show-mode-map
+            ("t" . elfeed-webkit-toggle)))
   #+end_src
 
 * Macintoch
