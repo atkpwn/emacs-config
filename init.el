@@ -561,12 +561,48 @@
   :custom
   (zoom-window-mode-line-color "#3a4a50"))
 
+(use-package popper
+  :bind (("C-`"   . popper-toggle)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+          "\\*Flymake diagnostics for `[^/]+'\\*"
+          help-mode
+          compilation-mode))
+  (popper-mode +1)
+  (popper-echo-mode +1)) ; For echo area hints
+
 (use-package winner
   :bind
   (("M-[" . winner-undo)
    ("M-]" . winner-redo))
   :config
   (winner-mode 1))
+
+(use-package openwith
+  :disabled
+  :config
+  (setq openwith-associations
+        (list
+         (list (openwith-make-extension-regexp
+                '("xbm" "pbm" "pgm" "ppm" "pnm"
+                  "png" "gif" "bmp" "tif" "jpeg" "jpg"))
+               "gthumb"
+               '(file))
+         (list (openwith-make-extension-regexp
+                '("doc" "xls" "ppt" "odt" "ods" "odg" "odp"))
+               "libreoffice"
+               '(file))
+         (list (openwith-make-extension-regexp
+                '("pdf" "ps" "ps.gz" "dvi"))
+               "evince"
+               '(file))
+         ))
+  (openwith-mode 1))
 
 (with-eval-after-load 'ispell
   (when (executable-find ispell-program-name)
