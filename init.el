@@ -758,7 +758,9 @@
   (python-mode . blacken-mode))
 
 (use-package cmake-mode
-  :mode ("CMakeLists.txt" "\\.cmake\\'"))
+  :mode ("CMakeLists.txt" "\\.cmake\\'")
+  :hook
+  (cmake-mode . eglot-ensure))
 
 (use-package cmake-font-lock
   :hook
