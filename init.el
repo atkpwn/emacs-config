@@ -43,67 +43,70 @@
     (setplist sym (use-package-plist-delete
                    (symbol-plist sym) 'byte-obsolete-info))))
 
-(use-package bind-key)
+(use-package emacs
+  :bind
+  (("C-x f" . find-file-other-window)
+   ("s-y"   . revert-buffer))
+  :hook
+  (before-save . delete-trailing-whitespace)
+  (after-save  . executable-make-buffer-file-executable-if-script-p)
+  :custom
+  (global-auto-revert-non-file-buffers t)
+  (auto-hscroll-mode       'current-line)
+  (auto-save-interval                 64)
+  (auto-save-timeout                   2)
+  (enable-recursive-minibuffers        t)
+  (fill-column                       100)
+  (history-delete-duplicates           t)
+  (history-length                    200)
+  (kill-do-not-save-duplicates         t)
+  (load-prefer-newer                   t)
+  (require-final-newline               t)
 
-  (use-package emacs
-    :bind
-    (("C-x f" . find-file-other-window)
-     ("s-y"   . revert-buffer))
-    :hook
-    (before-save . delete-trailing-whitespace)
-    (after-save  . executable-make-buffer-file-executable-if-script-p)
-    :custom
-    (global-auto-revert-non-file-buffers t)
-    (auto-hscroll-mode       'current-line)
-    (auto-save-interval                 64)
-    (auto-save-timeout                   2)
-    (enable-recursive-minibuffers        t)
-    (fill-column                       100)
-    (history-delete-duplicates           t)
-    (history-length                    200)
-    (kill-do-not-save-duplicates         t)
-    (load-prefer-newer                   t)
-    (require-final-newline               t)
+  :config
+  (global-auto-revert-mode 1)
+  (setq global-auto-revert-non-file-buffers t)
+  (delete-selection-mode)
 
-    :config
-    (global-auto-revert-mode 1)
-    ;; (delete-selection-mode)
-    (setq-default indent-tabs-mode nil)
-    (setq-default buffer-file-coding-system 'utf-8-unix)
-    (setq-default tab-width 2)
-    (setq scroll-conservatively 10000
-          scroll-preserve-screen-position t)
+  (setq-default indent-tabs-mode nil)
+  (setq-default buffer-file-coding-system 'utf-8-unix)
+  (setq-default tab-width 2))
 
-    (if (boundp 'use-short-answers)
-      (setq use-short-answers t)
-      (advice-add 'yes-or-no-p :override #'y-or-n-p))
+(setq scroll-conservatively 10000
+      scroll-preserve-screen-position t)
 
-    ;; menu bar & tool bar & Bell
-    (tool-bar-mode   -1)
-    (scroll-bar-mode -1)
+(if (boundp 'use-short-answers)
+    (setq use-short-answers t)
+  (advice-add 'yes-or-no-p :override #'y-or-n-p))
 
-    (setq frame-resize-pixelwise t)
-    (when (and (fboundp 'menu-bar-mode)
-               (not (eq system-type 'darwin)))
-      (menu-bar-mode -1)
-      (global-set-key [f10] 'menu-bar-mode)
-      (unbind-key "M-`"))
+;; menu bar & tool bar & Bell
+(tool-bar-mode   -1)
+(scroll-bar-mode -1)
 
-    ;; bell
-    (setq visible-bell nil
-          ring-bell-function '(lambda ()
-                                (invert-face 'mode-line)
-                                (run-with-timer 0.1 nil #'invert-face 'mode-line)))
+(setq frame-resize-pixelwise t)
+(when (and (fboundp 'menu-bar-mode)
+           (not (eq system-type 'darwin)))
+  (menu-bar-mode -1)
+  (global-set-key [f10] 'menu-bar-mode)
+  (unbind-key "M-`"))
 
-    ;; undo-tree
-    (global-undo-tree-mode)
+;; bell
+(setq visible-bell nil
+      ring-bell-function '(lambda ()
+                            (invert-face 'mode-line)
+                            (run-with-timer 0.1 nil #'invert-face 'mode-line)))
 
-    (set-register ?i (cons 'file (emacs-path "init.org")))
-    (setq nix-configuration-file (expand-file-name "/sudo::/etc/nixos/configuration.nix"))
-    (set-register ?c (cons 'file nix-configuration-file))
-    (set-register ?h (cons 'file (expand-file-name "~/.config/home-manager/programs.nix")))
-    (set-register ?t (cons 'file (expand-file-name "~/orgfiles/todo.org")))
-    )
+;; undo-tree
+(global-undo-tree-mode)
+
+;; disable UI dialog
+(setq use-dialog-box nil)
+
+(set-register ?i (cons 'file (emacs-path "init.org")))
+(setq nix-configuration-file (expand-file-name "/sudo::/etc/nixos/configuration.nix"))
+(set-register ?c (cons 'file nix-configuration-file))
+(set-register ?h (cons 'file (expand-file-name "~/.config/home-manager/programs.nix")))
+(set-register ?t (cons 'file (expand-file-name "~/orgfiles/todo.org")))
 
 (use-package which-key
   :demand t
@@ -112,8 +115,9 @@
   (which-key-mode))
 
 (use-package no-littering
+  :custom
+  (custom-file (expand-file-name "custom.el" user-emacs-directory))
   :config
-  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (load custom-file t)
   (no-littering-theme-backups))
 
@@ -251,7 +255,7 @@
 
 (use-package embark
   :bind
-  (("C-'"   . embark-act)       ;; pick some comfortable binding
+  (("M-'"   . embark-act)       ;; pick some comfortable binding
    ;; ("C-;"   . embark-dwim)   ;; good alternative: M-.
    ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
   :init
@@ -337,7 +341,10 @@
 
 (use-package savehist
   :init
+  (setq history-length 25)
   (savehist-mode))
+
+(save-place-mode 1)
 
 (use-package orderless
   :demand t
@@ -456,9 +463,6 @@
   (define-key dirvish-mode-map (kbd "<mouse-2>") 'dired-mouse-find-file-other-window)
   (define-key dirvish-mode-map (kbd "<mouse-3>") 'dired-mouse-find-file)
 
-  (add-to-list 'dirvish-open-with-programs
-               '(("pdf") . ("evince" "%f")))
-
   :bind ; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
   (("C-c f" . dirvish-fd)
    :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
@@ -488,9 +492,10 @@
 (use-package yasnippet
   :demand
   :hook
-  (c++-mode  . yas-minor-mode)
-  (java-mode . yas-minor-mode)
-  (nix-mode  . yas-minor-mode)
+  (c++-ts-mode    . yas-minor-mode)
+  (java-ts-mode   . yas-minor-mode)
+  (nix-mode       . yas-minor-mode)
+  (python-ts-mode . yas-minor-mode)
   :custom
   (yas-snippet-dirs (list (emacs-path "snippets")))
   :config
@@ -864,8 +869,7 @@
   :config
   (push '(yaml-mode . yaml-ts-mode) major-mode-remap-alist))
 
-(use-package dockerfile-mode
-  :mode "/Dockerfile")
+(use-package dockerfile-mode)
 
 (use-package terraform-mode
   :mode "\\.tf\\'"
