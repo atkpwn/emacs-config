@@ -396,6 +396,43 @@
   :hook
   (magit-mode . magit-delta-mode))
 
+(use-package blamer
+  :bind
+  (("s-i"   . blamer-show-commit-info)
+   ("C-c i" . blamer-show-posframe-commit-info))
+  :defer 20
+  :custom
+  (blamer-idle-time 0.3)
+  (blamer-min-offset 70)
+  :custom-face
+  (blamer-face ((t :foreground "#7a88cf"
+                   :background "unspecified"
+                   :height 140
+                   :italic t))))
+
+(use-package diff-hl
+  :commands
+  (diff-hl-mode diff-hl-dired-mode)
+  :hook
+  (magit-pre-refresh  . diff-hl-magit-pre-refresh)
+  (magit-post-refresh . diff-hl-magit-post-refresh)
+  (prog-mode    . diff-hl-mode)
+  (conf-mode    . diff-hl-mode)
+  (yaml-ts-mode . diff-hl-mode)
+  (nix-mode     . diff-hl-mode)
+  (org-mode     . diff-hl-mode))
+
+(use-package diff-hl-flydiff
+  :commands
+  diff-hl-flydiff-mode
+  :init
+  (diff-hl-flydiff-mode))
+
+;; from https://github.com/jwiegley/dot-emacs/blob/master/init.org#diffview
+(use-package diffview
+  :commands
+  (diffview-current diffview-region diffview-message))
+
 (use-package treemacs
   :defer t
   :bind
