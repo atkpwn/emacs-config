@@ -819,14 +819,16 @@
     (if cpp-format-on-save-p
         (eglot-format-buffer))))
 
-(use-package go-mode
+(use-package go-ts-mode
   :hook
   (go-ts-mode . (lambda ()
-               (eglot-ensure)
-               (add-hook 'before-save-hook #'eglot-format-buffer nil t)))
+                  (subword-mode)
+                  (eglot-ensure)
+                  (add-hook 'before-save-hook #'eglot-format-buffer nil t)))
   :config
-  (setq project-vc-extra-root-markers '(".project.el"))
-  (push '(go-mode . go-ts-mode) major-mode-remap-alist))
+  (push '(go-mode . go-ts-mode) major-mode-remap-alist)
+  (setq go-ts-mode-indent-offset 2)
+  (setq project-vc-extra-root-markers '(".project.el")))
 
 (use-package rust-mode
   :hook
