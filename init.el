@@ -775,10 +775,14 @@
 (use-package flycheck-clojure
   :no-require t)
 
-(use-package nix-mode
+(use-package nix-ts-mode
   :mode "\\.nix\\'"
   :hook
-  (nix-mode . eglot-ensure))
+  (nix-ts-mode . eglot-ensure)
+  :config
+  (add-to-list 'eglot-server-programs
+               '(nix-ts-mode . ("nixd")))
+  (push '(nix-mode . nix-ts-mode) major-mode-remap-alist))
 
 (use-package pyvenv
   :hook
