@@ -657,7 +657,14 @@
   :bind
   ("M-Q" . unfill-paragraph))
 
-(use-package eglot)
+(use-package eglot
+  :demand t
+  :bind
+  (:map eglot-mode-map
+        ("C-c e f n" . flymake-goto-next-error)
+        ("C-c e f p" . flymake-goto-prev-error)
+        ("C-c e r"   . eglot-rename)
+        ("C-c e f"   . eglot-format)))
 
 (use-package project
   :disabled
