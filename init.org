@@ -1030,11 +1030,11 @@
 
 ** Json
    #+begin_src emacs-lisp
-     (use-package json-mode
+     (use-package json-ts-mode
        :mode "\\.json\\'")
 
      (use-package jq-format
-       :after json-mode)
+       :after json-ts-mode)
    #+end_src
 
 ** YAML

@@ -920,11 +920,11 @@
   (setq reftex-plug-into-AUCTeX t) ;; https://www.gnu.org/software/emacs/manual/html_node/reftex/AUCTeX_002dRefTeX-Interface.html
   (setq reftex-cite-prompt-optional-args t))
 
-(use-package json-mode
+(use-package json-ts-mode
   :mode "\\.json\\'")
 
 (use-package jq-format
-  :after json-mode)
+  :after json-ts-mode)
 
 (use-package yaml-ts-mode
   :mode ("\\.yml\\'" "\\.yaml\\'")
