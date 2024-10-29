@@ -666,32 +666,6 @@
         ("C-c e r"   . eglot-rename)
         ("C-c e f"   . eglot-format)))
 
-(use-package project
-  :disabled
-  :config
-  ;; from https://gist.github.com/pesterhazy/e8e445e6715f5d8bae3c62bc9db32469
-  (setq project-sentinels '("package.json" ".project.el"))
-
-  (require 'cl-extra)
-
-  (defun find-project-root (dir)
-    (locate-dominating-file
-     dir
-     (lambda (file)
-       (and (file-directory-p file)
-            (cl-some (lambda (sentinel)
-                       (file-exists-p (expand-file-name sentinel file)))
-                project-sentinels)))))
-
-  (defun project-try-enclosing-project (dir)
-    (let ((root (find-project-root dir)))
-      (if (and (boundp 'eglot-lsp-context)
-               eglot-lsp-context root)
-          (list 'vc 'Git root)
-        nil)))
-
-  (add-hook 'project-find-functions #'project-try-enclosing-project))
-
 (use-package corfu
   :custom
   (corfu-cycle t)
