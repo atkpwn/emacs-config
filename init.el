@@ -776,60 +776,66 @@
   (nix-ts-mode . eglot-ensure)
   :config
   (add-to-list 'eglot-server-programs
-               '(nix-ts-mode . ("nixd")))
-  (push '(nix-mode . nix-ts-mode) major-mode-remap-alist))
+               '(nix-ts-mode . ("nixd"))))
 
-(use-package pyvenv
+(use-package python
   :hook
-  (python-mode . pyvenv-mode)
-  (python-mode . pyvenv-tracking-mode)
-  (python-mode . (lambda ()
-                   (eldoc-mode)
-                   (eglot-ensure)))
+  (python-ts-mode . (lambda ()
+                      (pyvenv-mode)
+                      (pyvenv-tracking-mode)))
+  (python-ts-mode . (lambda ()
+                      (eldoc-mode)
+                      (eglot-ensure)))
   :custom
-  (pyvenv-default-virtual-env-name "venv")
   (python-indent-guess-indent-offset-verbose nil)
   :config
-  (add-hook 'pyvenv-post-activate-hooks #'pyvenv-restart-python)
-  (setq major-mode-remap-alist
-        '((python-mode . python-ts-mode))))
+  (push '(python-mode . python-ts-mode) major-mode-remap-alist))
 
-(use-package blacken
-  :hook
-  (python-mode . blacken-mode))
+(use-package pyvenv
+  :custom
+  (pyvenv-default-virtual-env-name "venv")
+  :config
+  (add-hook 'pyvenv-post-activate-hooks #'pyvenv-restart-python))
 
-(use-package cmake-mode
+(use-package cmake-ts-mode
   :mode ("CMakeLists.txt" "\\.cmake\\'")
   :hook
-  (cmake-mode . eglot-ensure))
+  (cmake-ts-mode . eglot-ensure))
 
 (use-package cmake-font-lock
   :hook
   (cmake-mode . cmake-font-lock-activate))
 
-(use-package cc-mode
+(use-package c-ts-mode
   :hook
-  ((c-mode c++-mode) . (lambda ()
-                         (eglot-ensure)
-                         (setq-local cpp-format-on-save-p t)
-                         (add-hook 'before-save-hook #'cpp-format nil t)))
+  ((c-ts-mode c++-ts-mode) . (lambda ()
+                               (eglot-ensure)
+                               (setq-local cpp-format-on-save-p t)
+                               (add-hook 'before-save-hook #'cpp-format nil t)))
   :config
+  (push '(c-mode . c-ts-mode) major-mode-remap-alist)
+  (push '(c++-mode . c++-ts-mode) major-mode-remap-alist)
+  (push '(c-or-c++-mode . c-or-c++-ts-mode) major-mode-remap-alist)
   (defun cpp-format ()
     (if cpp-format-on-save-p
         (eglot-format-buffer))))
 
+(use-package kotlin-mode
+  :hook
+  (kotlin-mode . eglot-ensure))
+
 (use-package go-ts-mode
+  :mode "\\.go\\'"
   :hook
   (go-ts-mode . (lambda ()
                   (subword-mode)
                   (eglot-ensure)
                   (add-hook 'before-save-hook #'eglot-format-buffer nil t)))
   :config
-  (push '(go-mode . go-ts-mode) major-mode-remap-alist)
   (setq go-ts-mode-indent-offset 2)
   (setq project-vc-extra-root-markers '(".project.el")))
 
-(use-package rust-mode
+(use-package rust-ts-mode
   :hook
   (rust-ts-mode . prettify-symbols-mode)
   (rust-ts-mode . (lambda ()
@@ -842,7 +848,6 @@
   ;;                                ( :procMacro (:enable t)
   ;;                                  :cargo ( :buildScripts (:enable t)
   ;;                                           :features "all")))))
-  (push '(rust-mode . rust-ts-mode) major-mode-remap-alist)
   (setq rust-format-on-save t))
 
 (use-package cargo-mode
@@ -860,8 +865,6 @@
   :hook
   (typescript-ts-mode . eglot-ensure)
   :config
-  (push '(typescript-mode . typescript-ts-mode) major-mode-remap-alist)
-
   ;; deno setup, see https://docs.deno.com/runtime/getting_started/setup_your_environment/#emacs
   (add-to-list 'eglot-server-programs
                '((js-ts-mode typescript-ts-mode) . (eglot-deno "deno" "lsp")))
