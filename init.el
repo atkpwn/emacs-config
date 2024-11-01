@@ -391,6 +391,8 @@
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
   (transient-default-level 5)
+  (magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
+
   :config
   ;; from https://emacs.stackexchange.com/a/43975
   (transient-define-suffix magit-submodule-update-all ()
