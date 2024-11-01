@@ -74,6 +74,7 @@
   (read-extended-command-predicate #'command-completion-default-include-p)
 
   :config
+  (setq confirm-kill-emacs 'yes-or-no-p)
   (global-auto-revert-mode 1)
   (setq global-auto-revert-non-file-buffers t)
   (delete-selection-mode)

@@ -86,6 +86,7 @@
       (read-extended-command-predicate #'command-completion-default-include-p)
 
       :config
+      (setq confirm-kill-emacs 'yes-or-no-p)
       (global-auto-revert-mode 1)
       (setq global-auto-revert-non-file-buffers t)
       (delete-selection-mode)
@@ -93,7 +94,9 @@
       (setq-default indent-tabs-mode nil)
       (setq-default buffer-file-coding-system 'utf-8-unix)
       (setq-default tab-width 2))
+  #+end_src
 
+  #+begin_src emacs-lisp
     (setq scroll-conservatively 10000
           scroll-preserve-screen-position t)
 
@@ -130,6 +133,9 @@
     (set-register ?h (cons 'file (expand-file-name "~/.config/home-manager/programs.nix")))
     (set-register ?t (cons 'file (expand-file-name "~/orgfiles/todo.org")))
 
+  #+end_src
+
+  #+begin_src emacs-lisp
     (use-package which-key
       :demand t
       :diminish
