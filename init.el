@@ -987,6 +987,7 @@
   (:map elfeed-show-mode-map
         ("t" . elfeed-webkit-toggle)))
 
-(setq mac-option-modifier 'super)
+(setq mac-option-modifier 'none)
+(global-set-key "¥" 'revert-buffer)
 (setq mac-command-modifier 'meta)
 (global-unset-key (kbd "s-q"))
