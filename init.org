@@ -260,6 +260,15 @@
        ("M-Z" . avy-zap-to-char-dwim)))
   #+end_src
 
+** Highlight indentation
+   #+begin_src emacs-lisp
+     (use-package highlight-indentation
+       :hook
+       (yaml-ts-mode . highlight-indentation-current-column-mode)
+       :config
+       (set-face-background 'highlight-indentation-current-column-face "#2b2e2e"))
+   #+end_src
+
 * Search & Minibuffer
   #+begin_src emacs-lisp
     (use-package consult
