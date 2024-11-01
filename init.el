@@ -230,6 +230,12 @@
   (("M-z" . avy-zap-up-to-char-dwim)
    ("M-Z" . avy-zap-to-char-dwim)))
 
+(use-package highlight-indentation
+  :hook
+  (yaml-ts-mode . highlight-indentation-current-column-mode)
+  :config
+  (set-face-background 'highlight-indentation-current-column-face "#2b2e2e"))
+
 (use-package consult
   :bind
   (("C-s"     . consult-line)
