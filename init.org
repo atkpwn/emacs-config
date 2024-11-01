@@ -1047,6 +1047,12 @@
        (push '(yaml-mode . yaml-ts-mode) major-mode-remap-alist))
    #+end_src
 
+** Nginx
+   #+begin_src emacs-lisp
+     (use-package nginx-mode
+       :commands nginx-mode)
+   #+end_src
+
 ** Docker
    #+begin_src emacs-lisp
      (use-package dockerfile-mode)

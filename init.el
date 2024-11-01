@@ -922,6 +922,9 @@
   :config
   (push '(yaml-mode . yaml-ts-mode) major-mode-remap-alist))
 
+(use-package nginx-mode
+  :commands nginx-mode)
+
 (use-package dockerfile-mode)
 
 (use-package terraform-mode
