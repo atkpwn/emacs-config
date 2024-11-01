@@ -63,6 +63,16 @@
   (load-prefer-newer                   t)
   (require-final-newline               t)
 
+  ;; from corfu
+  ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
+  ;; try `cape-dict'.
+  (text-mode-ispell-word-completion nil)
+
+  ;; Hide commands in M-x which do not apply to the current mode.  Corfu
+  ;; commands are hidden, since they are not used via M-x. This setting is
+  ;; useful beyond Corfu.
+  (read-extended-command-predicate #'command-completion-default-include-p)
+
   :config
   (global-auto-revert-mode 1)
   (setq global-auto-revert-non-file-buffers t)
@@ -694,9 +704,12 @@
   :bind
   (("M-/"   . dabbrev-completion)
    ("C-M-/" . dabbrev-expand))
-  ;; Other useful Dabbrev configurations
-  :custom
-  (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  ;; Since 29.1, use `dabbrev-ignored-buffer-regexps' on older.
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
 (use-package eldoc)
 
