@@ -181,17 +181,23 @@
   :diminish selected-minor-mode
   :bind
   (:map selected-keymap
-   ("[" . align-code)
-   ("f" . fill-region)
-   ("U" . unfill-region)
-   ("d" . downcase-region)
-   ("u" . upcase-region)
-   ("r" . reverse-region)
-   ("s" . sort-lines))
+        ("[" . align-code)
+        ("f" . fill-region)
+        ("U" . unfill-region)
+        ("d" . downcase-region)
+        ("u" . upcase-region)
+        ("r" . reverse-region)
+        ("s" . sort-lines))
   :hook
   (prog-mode . selected-minor-mode)
   (conf-mode . selected-minor-mode)
   (text-mode . selected-minor-mode))
+
+(use-package expand-region
+  :bind
+  ("C-." . er/expand-region)
+  :custom
+  (expand-region-fast-keys-enabled nil))
 
 (use-package multiple-cursors
   :after selected
@@ -210,12 +216,6 @@
    ("Y"   . mc/mark-previous-symbol-like-this)
    ("w"   . mc/mark-next-word-like-this)
    ("W"   . mc/mark-previous-word-like-this)))
-
-(use-package expand-region
-  :bind
-  ("C-." . er/expand-region)
-  :custom
-  (expand-region-fast-keys-enabled nil))
 
 (use-package avy
   :bind
