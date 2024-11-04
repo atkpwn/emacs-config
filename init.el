@@ -239,7 +239,7 @@
 (use-package consult
   :bind
   (("C-s"     . consult-line)
-   ("C-x b"   . consult-buffer)
+   ("C-x x B" . consult-buffer)
    ("C-c f"   . consult-project-buffer)
    ("C-c g"   . consult-goto-line)
    ("C-c r r" . consult-ripgrep)
@@ -559,8 +559,11 @@
 
 (use-package perspective
   :bind
+  ("C-x b"   . persp-switch-to-buffer*)
   ("C-x C-b" . persp-list-buffers)
   ("C-x k"   . persp-kill-buffer*)
+  (:map perspective-map
+        ("b" . persp-switch-to-buffer))
   :custom
   (persp-mode-prefix-key (kbd "C-x x"))
   (persp-initial-frame-name "main")
