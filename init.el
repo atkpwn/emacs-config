@@ -239,7 +239,7 @@
 (use-package consult
   :bind
   (("C-s"     . consult-line)
-   ("C-x x B" . consult-buffer)
+   ("C-x B"   . consult-buffer)
    ("C-c f"   . consult-project-buffer)
    ("C-c g"   . consult-goto-line)
    ("C-c r r" . consult-ripgrep)
@@ -744,6 +744,10 @@
     (font-lock-add-keywords
      nil
      '(("\\(FIX\\|FIXME\\|NOTE\\|TODO\\|WARNING\\|!!!\\):" 1 font-lock-todo-face t)))))
+
+(use-package sh-mode
+  :hook
+  (sh-mode . eglot-ensure))
 
 (use-package lisp-mode
   :hook
