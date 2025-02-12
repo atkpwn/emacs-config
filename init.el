@@ -863,6 +863,8 @@
   (setq project-vc-extra-root-markers '(".project.el")))
 
 (use-package rust-ts-mode
+  :mode
+  ("\\.rs\\'"  . rust-ts-mode)
   :hook
   (rust-ts-mode . prettify-symbols-mode)
   (rust-ts-mode . (lambda ()
@@ -870,11 +872,6 @@
                     (setq indent-tabs-mode nil)))
   :config
   (setq project-vc-extra-root-markers '(".project.el"))
-  ;; (add-to-list 'eglot-server-programs
-  ;;              `(rust-ts-mode . ("rust-analyzer" :initializationOptions
-  ;;                                ( :procMacro (:enable t)
-  ;;                                  :cargo ( :buildScripts (:enable t)
-  ;;                                           :features "all")))))
   (setq rust-format-on-save t))
 
 (use-package cargo-mode
