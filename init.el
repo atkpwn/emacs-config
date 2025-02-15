@@ -548,10 +548,11 @@
 (use-package yasnippet
   :demand
   :hook
-  (c++-ts-mode    . yas-minor-mode)
-  (java-ts-mode   . yas-minor-mode)
-  (nix-mode       . yas-minor-mode)
-  (python-ts-mode . yas-minor-mode)
+  (c++-ts-mode        . yas-minor-mode)
+  (java-ts-mode       . yas-minor-mode)
+  (nix-mode           . yas-minor-mode)
+  (python-ts-mode     . yas-minor-mode)
+  (typescript-ts-mode . yas-minor-mode)
   :custom
   (yas-snippet-dirs (list (emacs-path "snippets")))
   :config
@@ -881,25 +882,18 @@
   (:map cargo-mode-map
         ("C-c C-c r" . cargo-process-run)))
 
-(use-package typescript-ts-mode
+(use-package js
   :mode
-  (("\\.js\\'"  . typescript-ts-mode)
-   ("\\.ts\\'"  . typescript-ts-mode)
-   ("\\.tsx\\'" . tsx-ts-mode))
+  ("\\.js\\'"  . js-ts-mode)
   :hook
-  (typescript-ts-mode . eglot-ensure)
+  (js-ts-mode . eglot-ensure)
   :config
-  ;; deno setup, see https://docs.deno.com/runtime/getting_started/setup_your_environment/#emacs
-  (add-to-list 'eglot-server-programs
-               '((js-ts-mode typescript-ts-mode) . (eglot-deno "deno" "lsp")))
+  (push '(js-mode . js-ts-mode) major-mode-remap-alist))
 
-  (defclass eglot-deno (eglot-lsp-server) ()
-    :documentation "A custom class for deno lsp.")
-
-  (cl-defmethod eglot-initialization-options ((server eglot-deno))
-    "Passes through required deno initialization options"
-    (list :enable t
-          :lint t)))
+(use-package deno-ts-mode
+  :hook
+  (deno-ts-mode     . eglot-ensure)
+  (deno-tsx-ts-mode . eglot-ensure))
 
 (use-package tex-site
   :mode ("\\.tex\\'" . LaTeX-mode)
