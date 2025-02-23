@@ -996,6 +996,31 @@ targets."
 
 (use-package org-config)
 
+(use-package citar
+  :bind
+  ("C-c [" . citar-insert-citation)
+  :hook
+  (LaTeX-mode . citar-capf-setup)
+  (org-mode   . citar-capf-setup)
+  :custom
+  (citar-bibliography '("~/Dropbox/papers/bibliography/references.bib")))
+
+(use-package citar-embark
+  :after citar embark
+  :no-require
+  :config
+  (citar-embark-mode))
+
+(use-package grip-mode
+  :bind
+  ;; Make a keybinding: `C-c C-c g'
+  (:map markdown-mode-command-map
+        ("g" . grip-mode))
+  :custom
+  (grip-command 'go-grip) ;; auto, grip, go-grip or mdopen
+  ;; (grip-preview-use-webkit t)
+  )
+
 (use-package elfeed
   :commands elfeed
   :config
