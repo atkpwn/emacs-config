@@ -277,42 +277,45 @@
    #+end_src
 
 * Search & Minibuffer
-  #+begin_src emacs-lisp
-    (use-package consult
-      :bind
-      (("C-s"     . consult-line)
-       ("C-x B"   . consult-buffer)
-       ("C-c f"   . consult-project-buffer)
-       ("C-c g"   . consult-goto-line)
-       ("C-c r r" . consult-ripgrep)
-       ("C-c r f" . consult-fd)
-       :map minibuffer-local-map
-       ("C-r" . consult-history))
-      :config
-      (setq completion-in-region-function #'consult-completion-in-region)
-      (consult-customize consult-buffer
-                         :preview-key "M-."))
+** Consult
+   #+begin_src emacs-lisp
+     (use-package consult
+       :bind
+       (("C-s"     . consult-line)
+        ("C-x B"   . consult-buffer)
+        ("C-c f"   . consult-project-buffer)
+        ("C-c g"   . consult-goto-line)
+        ("C-c r r" . consult-ripgrep)
+        ("C-c r f" . consult-fd)
+        :map minibuffer-local-map
+        ("C-r" . consult-history))
+       :config
+       (setq completion-in-region-function #'consult-completion-in-region)
+       (consult-customize consult-buffer
+                          :preview-key "M-."))
 
-    (use-package consult-project-extra)
+     (use-package consult-project-extra)
 
-    (use-package consult-dir
-      :bind
-      (("C-x C-d" . consult-dir)
-       :map minibuffer-local-completion-map
-       ("C-x C-d" . consult-dir)
-       ("C-x C-j" . consult-dir-jump-file)))
+     (use-package consult-dir
+       :bind
+       (("C-x C-d" . consult-dir)
+        :map minibuffer-local-completion-map
+        ("C-x C-d" . consult-dir)
+        ("C-x C-j" . consult-dir-jump-file)))
 
-    (use-package consult-dir-vertico
-      :no-require t
-      :after (consult-dir vertico)
-      :defines (vertico-map)
-      :bind
-      (:map vertico-map
-            ("C-x C-j" . consult-dir)
-            ("M-g d"   . consult-dir)
-            ("M-s f"   . consult-dir-jump-file)))
-  #+end_src
+     (use-package consult-dir-vertico
+       :no-require t
+       :after (consult-dir vertico)
+       :defines (vertico-map)
+       :bind
+       (:map vertico-map
+             ("C-x C-j" . consult-dir)
+             ("M-g d"   . consult-dir)
+             ("M-s f"   . consult-dir-jump-file)))
+   #+end_src
 
+** Embark
+   Basic setup with which-key-like display for actions, see [[https://github.com/oantolin/embark/wiki/Additional-Configuration#use-which-key-like-a-key-menu-prompt][Embark's Wiki]].
   #+begin_src emacs-lisp
     (use-package embark
       :bind
@@ -326,16 +329,57 @@
       ;; strategy, if you want to see the documentation from multiple providers.
       (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
       ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
-      :custom
-      (embark-verbose-indicator-display-action '(display-buffer-at-bottom))
       :config
       ;; Hide the mode line of the Embark live/completions buffers
       (add-to-list 'display-buffer-alist
                    '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                      nil
                      (window-parameters (mode-line-format . none))))
-      (add-to-list 'embark-keymap-alist '(tab . embark-tab-actions)))
+      (add-to-list 'embark-keymap-alist '(tab . embark-tab-actions))
 
+      ;; which-key-like menu prompt
+      (defun embark-which-key-indicator ()
+        "An embark indicator that displays keymaps using which-key.
+    The which-key help message will show the type and value of the
+    current target followed by an ellipsis if there are further
+    targets."
+        (lambda (&optional keymap targets prefix)
+          (if (null keymap)
+              (which-key--hide-popup-ignore-command)
+    	(which-key--show-keymap
+    	 (if (eq (plist-get (car targets) :type) 'embark-become)
+                 "Become"
+               (format "Act on %s '%s'%s"
+                       (plist-get (car targets) :type)
+                       (embark--truncate-target (plist-get (car targets) :target))
+                       (if (cdr targets) "…" "")))
+    	 (if prefix
+                 (pcase (lookup-key keymap prefix 'accept-default)
+                   ((and (pred keymapp) km) km)
+                   (_ (key-binding prefix 'accept-default)))
+               keymap)
+    	 nil nil t (lambda (binding)
+                         (not (string-suffix-p "-argument" (cdr binding))))))))
+
+      (setq embark-indicators
+    	'(embark-which-key-indicator
+    	  embark-highlight-indicator
+    	  embark-isearch-highlight-indicator))
+
+      (defun embark-hide-which-key-indicator (fn &rest args)
+        "Hide the which-key indicator immediately when using the completing-read prompter."
+        (which-key--hide-popup-ignore-command)
+        (let ((embark-indicators
+               (remq #'embark-which-key-indicator embark-indicators)))
+          (apply fn args)))
+
+      (advice-add #'embark-completing-read-prompter
+                  :around #'embark-hide-which-key-indicator)
+
+      )
+  #+end_src
+
+  #+begin_src emacs-lisp
     (use-package avy-embark
       :no-require t
       :after
@@ -343,13 +387,13 @@
       :preface
       (defun avy-action-embark (pt)
         (require 'embark
-        (unwind-protect
-            (save-excursion
-              (goto-char pt)
-              (embark-act))
-          (select-window
-           (cdr (ring-ref avy-ring 0))))
-        t))
+    	     (unwind-protect
+    		 (save-excursion
+    		   (goto-char pt)
+    		   (embark-act))
+    	       (select-window
+    		(cdr (ring-ref avy-ring 0))))
+    	     t))
       :config
       (setf (alist-get ?. avy-dispatch-alist) 'avy-action-embark))
 
@@ -358,67 +402,71 @@
       (embark-collect-mode . consult-preview-at-point-mode))
   #+end_src
 
-#+begin_src emacs-lisp
-  (use-package marginalia
-    ;; Either bind `marginalia-cycle' globally or only in the minibuffer
-    :bind
-    (("M-A" . marginalia-cycle)
-     :map minibuffer-local-map
-     ("M-A" . marginalia-cycle))
-    ;; The :init configuration is always executed (Not lazy!)
-    :config
-    ;; Must be in the :init section of use-package such that the mode gets
-    ;; enabled right away. Note that this forces loading the package.
-    (marginalia-mode))
+** Marginalia
+   #+begin_src emacs-lisp
+     (use-package marginalia
+       ;; Either bind `marginalia-cycle' globally or only in the minibuffer
+       :bind
+       (("M-A" . marginalia-cycle)
+        :map minibuffer-local-map
+        ("M-A" . marginalia-cycle))
+       ;; The :init configuration is always executed (Not lazy!)
+       :config
+       ;; Must be in the :init section of use-package such that the mode gets
+       ;; enabled right away. Note that this forces loading the package.
+       (marginalia-mode))
 
-  (use-package nerd-icons-completion
-    :after marginalia
-    :hook
-    (marginalia-mode . nerd-icons-completion-marginalia-setup)
-    :config
-    (nerd-icons-completion-mode))
+     (use-package nerd-icons-completion
+       :after marginalia
+       :hook
+       (marginalia-mode . nerd-icons-completion-marginalia-setup)
+       :config
+       (nerd-icons-completion-mode))
+   #+end_src
 
-  (use-package vertico
-    :bind
-    (:map vertico-map
-          ("C-n" . vertico-next)
-          ("C-p" . vertico-previous)
-          ;; ("C-j" . minibuffer-force-complete-and-exit)
-          ("C-j" . vertico-exit)
-          :map minibuffer-local-map
-          ("C-l" . vertico-directory-delete-word))
-    :custom
-    (vertico-count  10)
-    (vertico-resize nil)
-    (vertico-cycle  t)
-    :preface
-    (defun crm-indicator (args)
-      (cons (format "[CRM%s] %s"
-                    (replace-regexp-in-string
-                     "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                     crm-separator)
-                    (car args))
-            (cdr args)))
-    :init
-    (vertico-mode))
+** Vertico
+   #+begin_src emacs-lisp
+     (use-package vertico
+       :bind
+       (:map vertico-map
+             ("C-n" . vertico-next)
+             ("C-p" . vertico-previous)
+             ;; ("C-j" . minibuffer-force-complete-and-exit)
+             ("C-j" . vertico-exit)
+             :map minibuffer-local-map
+             ("C-l" . vertico-directory-delete-word))
+       :custom
+       (vertico-count  10)
+       (vertico-resize nil)
+       (vertico-cycle  t)
+       :preface
+       (defun crm-indicator (args)
+         (cons (format "[CRM%s] %s"
+                       (replace-regexp-in-string
+                        "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                        crm-separator)
+                       (car args))
+               (cdr args)))
+       :init
+       (vertico-mode))
 
-  (use-package vertico-directory)
+     (use-package vertico-directory)
 
-  (use-package savehist
-    :init
-    (setq history-length 25)
-    (savehist-mode))
+     (use-package savehist
+       :init
+       (setq history-length 25)
+       (savehist-mode))
 
-  (save-place-mode 1)
+     (save-place-mode 1)
 
-  (use-package orderless
-    :demand t
-    :custom
-    (completion-styles '(orderless basic))
-    (completion-category-defaults  nil)
-    (completion-category-overrides '((file (styles basic partial-completion))
-                                     (eglot (styles . (orderless flex))))))
-#+end_src
+     (use-package orderless
+       :demand t
+       :custom
+       (completion-styles '(orderless basic))
+       (completion-category-defaults  nil)
+       (completion-category-overrides '((file (styles basic partial-completion))
+                                        (eglot (styles . (orderless flex))))))
+   #+end_src
 
 * Parentheses
   #+begin_src emacs-lisp
