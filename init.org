@@ -1,6 +1,6 @@
 #+title: Emacs Configuration
 #+startup: overview
-#+property: header-args:emacs-lisp :tangle ./init.el
+#+property: header-args :emacs-lisp :tangle ./init.el
 
 * Startup setting
   #+begin_src emacs-lisp
@@ -1253,3 +1253,7 @@
     (setq mac-command-modifier 'meta)
     (global-unset-key (kbd "s-q"))
   #+end_src
+
+# Local Variables:
+# eval: (add-hook 'after-save-hook #'org-babel-tangle t t)
+# End:
