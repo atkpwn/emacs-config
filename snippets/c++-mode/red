@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: red
+# key: red
+# --
+std::cout << "\e[41m";
+std::cout << $0;
+std::cout << "\e[49m";
