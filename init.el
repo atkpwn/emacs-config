@@ -407,10 +407,10 @@ targets."
 (use-package orderless
   :demand t
   :custom
+  (orderless-matching-styles '(orderless-regexp))
   (completion-styles '(orderless basic))
-  (completion-category-defaults  nil)
   (completion-category-overrides '((file (styles basic partial-completion))
-                                   (eglot (styles . (orderless flex))))))
+                                   (eglot (styles orderless flex)))))
 
 (use-package paren
   :hook
