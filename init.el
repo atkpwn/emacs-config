@@ -1024,6 +1024,11 @@ targets."
   ;; (grip-preview-use-webkit t)
   )
 
+(use-package lean4-mode
+  :commands lean4-mode
+  :mode
+  "\\.lean'")
+
 (use-package elfeed
   :commands elfeed
   :config

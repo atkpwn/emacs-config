@@ -1193,6 +1193,14 @@
        )
    #+end_src
 
+** Lean
+   #+begin_src emacs-lisp
+     (use-package lean4-mode
+       :commands lean4-mode
+       :mode
+       "\\.lean'")
+   #+end_src
+
 * Elfeed
   #+begin_src emacs-lisp
     (use-package elfeed
