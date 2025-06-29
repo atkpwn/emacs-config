@@ -670,9 +670,10 @@ targets."
   (zoom-window-mode-line-color "#3a4a50"))
 
 (use-package popper
-  :bind (("C-`"   . popper-toggle)
-         ("M-`"   . popper-cycle)
-         ("C-M-`" . popper-toggle-type))
+  :bind
+  (("C-`"     . popper-toggle)
+   ("C-<tab>" . popper-cycle)
+   ("C-~"     . popper-toggle-type))
   :init
   (setq popper-reference-buffers
         '("\\*Messages\\*"
