@@ -75,6 +75,8 @@
       (load-prefer-newer                   t)
       (require-final-newline               t)
 
+      (recenter-positions '(middle top 0.15 bottom 0.85))
+
       ;; from corfu
       ;; Emacs 30 and newer: Disable Ispell completion function. As an alternative,
       ;; try `cape-dict'.
