@@ -718,6 +718,10 @@ targets."
     (add-hook 'text-mode-hook #'flyspell-mode)
     (add-hook 'prog-mode-hook #'flyspell-prog-mode)))
 
+(use-package treesit-fold
+  :config
+  (global-treesit-fold-mode))
+
 (use-package rg)
 
 (use-package unfill

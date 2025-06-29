@@ -810,7 +810,16 @@
        (when (executable-find ispell-program-name)
          (add-hook 'text-mode-hook #'flyspell-mode)
          (add-hook 'prog-mode-hook #'flyspell-prog-mode)))
+   #+end_src
 
+** Folding
+   #+begin_src emacs-lisp
+     (use-package treesit-fold
+       :config
+       (global-treesit-fold-mode))
+   #+end_src
+
+   #+begin_src emacs-lisp
      (use-package rg)
 
      (use-package unfill
