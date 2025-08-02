@@ -82,44 +82,41 @@
   (delete-selection-mode)
 
   (setq-default indent-tabs-mode nil)
+  (setq-default tab-width 2)
   (setq-default buffer-file-coding-system 'utf-8-unix)
-  (setq-default tab-width 2))
+  (setq next-screen-context-lines 7)
+  (pixel-scroll-precision-mode)
 
-(setq scroll-conservatively 10000
-      scroll-preserve-screen-position t)
+  (setq scroll-conservatively 10000
+        scroll-preserve-screen-position t)
 
-(if (boundp 'use-short-answers)
-    (setq use-short-answers t)
-  (advice-add 'yes-or-no-p :override #'y-or-n-p))
+  (if (boundp 'use-short-answers)
+      (setq use-short-answers t)
+    (advice-add 'yes-or-no-p :override #'y-or-n-p))
 
-;; menu bar & tool bar & Bell
-(tool-bar-mode   -1)
-(scroll-bar-mode -1)
+  ;; menu bar & tool bar & Bell
+  (tool-bar-mode   -1)
+  (scroll-bar-mode -1)
 
-(setq frame-resize-pixelwise t)
-(when (and (fboundp 'menu-bar-mode)
-           (not (eq system-type 'darwin)))
-  (menu-bar-mode -1)
-  (global-set-key [f10] 'menu-bar-mode)
-  (unbind-key "M-`"))
+  (setq frame-resize-pixelwise t)
+  (when (and (fboundp 'menu-bar-mode)
+             (not (eq system-type 'darwin)))
+    (menu-bar-mode -1)
+    (global-set-key [f10] 'menu-bar-mode)
+    (unbind-key "M-`"))
 
-;; bell
-(setq visible-bell nil
-      ring-bell-function '(lambda ()
-                            (invert-face 'mode-line)
-                            (run-with-timer 0.1 nil #'invert-face 'mode-line)))
+  ;; bell
+  (setq visible-bell nil
+        ring-bell-function '(lambda ()
+                              (invert-face 'mode-line)
+                              (run-with-timer 0.1 nil #'invert-face 'mode-line)))
 
-;; undo-tree
-(global-undo-tree-mode)
+  ;; undo-tree
+  (global-undo-tree-mode)
 
-;; disable UI dialog
-(setq use-dialog-box nil)
-
-(set-register ?i (cons 'file (emacs-path "init.org")))
-(setq nix-configuration-file (expand-file-name "/sudo::/etc/nixos/configuration.nix"))
-(set-register ?c (cons 'file nix-configuration-file))
-(set-register ?h (cons 'file (expand-file-name "~/.config/home-manager/programs.nix")))
-(set-register ?t (cons 'file (expand-file-name "~/orgfiles/todo.org")))
+  ;; disable UI dialog
+  (setq use-dialog-box nil)
+  )
 
 (use-package which-key
   :demand t
