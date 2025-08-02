@@ -735,7 +735,11 @@ targets."
         ("C-c e f n" . flymake-goto-next-error)
         ("C-c e f p" . flymake-goto-prev-error)
         ("C-c e r"   . eglot-rename)
-        ("C-c e f"   . eglot-format)))
+        ("C-c e f"   . eglot-format))
+  :config
+  (defface eglot-highlight-symbol-face
+  '((t (:foreground "gold1" :inherit bold)))
+  "Face used to highlight the symbol at point."))
 
 (use-package corfu
   :custom
