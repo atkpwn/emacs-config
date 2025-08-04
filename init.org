@@ -976,12 +976,10 @@
    #+end_src
 
 ** Python
+   Use [[https://docs.astral.sh/ruff/editors/setup/#emacs][ruff]]!
    #+begin_src emacs-lisp
      (use-package python
        :hook
-       (python-ts-mode . (lambda ()
-                           (pyvenv-mode)
-                           (pyvenv-tracking-mode)))
        (python-ts-mode . (lambda ()
                            (eldoc-mode)
                            (eglot-ensure)))
@@ -989,15 +987,16 @@
        (python-indent-guess-indent-offset-verbose nil)
        :config
        (push '(python-mode . python-ts-mode) major-mode-remap-alist))
-   #+end_src
 
-   See https://gist.github.com/habamax/290cda0e0cdc6118eb9a06121b9bc0d7
-   #+begin_src emacs-lisp
-     (use-package pyvenv
-       :custom
-       (pyvenv-default-virtual-env-name "venv")
+     (use-package flymake-ruff
+       :disabled ;; TODO: 2025-08-04 pylsp provide better code completion
+       :hook
+       (python-ts-mode . flymake-ruff-load)
        :config
-       (add-hook 'pyvenv-post-activate-hooks #'pyvenv-restart-python))
+       (with-eval-after-load 'eglot
+         (add-to-list 'eglot-server-programs
+                      '(python-mode . ("ruff" "server")))
+         (add-hook 'after-save-hook 'eglot-format)))
    #+end_src
 
 ** C/C++

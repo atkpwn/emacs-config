@@ -858,9 +858,6 @@ targets."
 (use-package python
   :hook
   (python-ts-mode . (lambda ()
-                      (pyvenv-mode)
-                      (pyvenv-tracking-mode)))
-  (python-ts-mode . (lambda ()
                       (eldoc-mode)
                       (eglot-ensure)))
   :custom
@@ -868,11 +865,15 @@ targets."
   :config
   (push '(python-mode . python-ts-mode) major-mode-remap-alist))
 
-(use-package pyvenv
-  :custom
-  (pyvenv-default-virtual-env-name "venv")
+(use-package flymake-ruff
+  :disabled ;; TODO: 2025-08-04 pylsp provide better code completion
+  :hook
+  (python-ts-mode . flymake-ruff-load)
   :config
-  (add-hook 'pyvenv-post-activate-hooks #'pyvenv-restart-python))
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 '(python-mode . ("ruff" "server")))
+    (add-hook 'after-save-hook 'eglot-format)))
 
 (use-package cmake-ts-mode
   :mode ("CMakeLists.txt" "\\.cmake\\'")
