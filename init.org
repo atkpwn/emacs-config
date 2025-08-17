@@ -813,6 +813,7 @@
        (global-treesit-fold-mode))
    #+end_src
 
+** Others
    #+begin_src emacs-lisp
      (use-package rg)
 
@@ -875,12 +876,15 @@
        (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
        (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
        (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
+   #+end_src
 
+** Document
+   #+begin_src emacs-lisp
      (use-package eldoc)
 
-     (use-package markdown-mode) ;; required to display eldoc properly
+     (use-package eldoc-box)
 
-     ;; TODO: cape
+     (use-package markdown-mode) ;; required to display eldoc properly
    #+end_src
 
 ** Highlight
@@ -1023,6 +1027,36 @@
        (defun cpp-format ()
          (if cpp-format-on-save-p
              (eglot-format-buffer))))
+   #+end_src
+
+** Java
+   My eglot setup mainly follows Skybert Hacks' [[https://youtu.be/fd7xcTG5Z_s][video]].
+*** direnv
+    Each project expected to have its own =.envrc=, at the root directory, with the content in the
+    following format:
+    #+begin_src shell
+      export JAVA_TOOL_OPTIONS="-javaagent:/path/to/lombok/lombok-${LOMBOK_VERSION}.jar"
+    #+end_src
+
+    #+begin_src emacs-lisp
+      (use-package envrc
+        :hook
+        (after-init . envrc-global-mode))
+    #+end_src
+
+*** Java with Eglot + Tree-sitter
+   #+begin_src emacs-lisp
+     (use-package java-ts-mode
+       :hook
+       (java-ts-mode . (lambda ()
+                         (subword-mode)
+                         (eldoc-box-hover-at-point-mode)
+                         (eglot-ensure)))
+       :custom
+       (eglot-report-progress nil) ;; get eglot to calm down
+       :config
+       (push '(java-mode . java-ts-mode) major-mode-remap-alist)
+       (setq java-ts-mode-indent-offset 2))
    #+end_src
 
 ** Kotlin

@@ -775,9 +775,9 @@ targets."
 
 (use-package eldoc)
 
-(use-package markdown-mode) ;; required to display eldoc properly
+(use-package eldoc-box)
 
-;; TODO: cape
+(use-package markdown-mode) ;; required to display eldoc properly
 
 (use-package prog-mode
   :hook
@@ -897,6 +897,22 @@ targets."
   (defun cpp-format ()
     (if cpp-format-on-save-p
         (eglot-format-buffer))))
+
+(use-package envrc
+  :hook
+  (after-init . envrc-global-mode))
+
+(use-package java-ts-mode
+  :hook
+  (java-ts-mode . (lambda ()
+                    (subword-mode)
+                    (eldoc-box-hover-at-point-mode)
+                    (eglot-ensure)))
+  :custom
+  (eglot-report-progress nil) ;; get eglot to calm down
+  :config
+  (push '(java-mode . java-ts-mode) major-mode-remap-alist)
+  (setq java-ts-mode-indent-offset 2))
 
 (use-package kotlin-mode
   :hook
