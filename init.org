@@ -1,6 +1,6 @@
 #+title: Emacs Configuration
 #+startup: overview
-#+property: header-args :emacs-lisp :tangle ./init.el
+#+property: header-args:emacs-lisp :tangle ./init.el
 
 * Startup setting
   #+begin_src emacs-lisp
