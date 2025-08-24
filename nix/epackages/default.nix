@@ -1,0 +1,94 @@
+{ pkgs, ... }:
+
+epkgs:
+let
+  org-modern-indent = pkgs.callPackage ./org-modern-indent.nix { inherit epkgs; };
+  lean4-mode = pkgs.callPackage ./lean4-mode.nix { inherit epkgs; };
+in with epkgs; [
+  ace-window
+  aggressive-indent
+  auctex
+  avy
+  avy-zap
+  back-button
+  blamer
+  cargo-mode
+  cider
+  citar
+  citar-embark
+  clj-refactor
+  clojure-ts-mode
+  cmake-font-lock
+  consult
+  consult-dir
+  consult-eglot
+  consult-project-extra
+  corfu
+  dashboard
+  deno-ts-mode
+  devdocs
+  diff-hl
+  diffview
+  diminish
+  dirvish
+  dockerfile-mode
+  doom-modeline
+  doom-themes
+  ef-themes
+  eldoc-box
+  elfeed
+  elfeed-webkit
+  embark
+  embark-consult
+  envrc
+  expand-region
+  flycheck-clojure
+  flymake-ruff
+  helpful
+  highlight-indentation
+  jinx
+  jq-format
+  kotlin-mode
+  lean4-mode
+  magit
+  magit-delta
+  marginalia
+  markdown-mode
+  minions
+  multiple-cursors
+  nerd-icons-completion
+  nerd-icons-corfu
+  nerd-icons-dired
+  nginx-mode
+  nix-mode
+  nix-ts-mode
+  no-littering
+  openwith
+  orderless
+  org-appear
+  org-modern
+  org-modern-indent
+  org-roam
+  org-superstar
+  pdf-tools
+  perspective
+  popper
+  project-treemacs
+  rainbow-delimiters
+  rg
+  selected
+  shfmt
+  treemacs
+  treemacs-magit
+  treemacs-nerd-icons
+  treesit-fold
+  treesit-grammars.with-all-grammars
+  undo-tree
+  unfill
+  use-package
+  vertico
+  visual-fill-column
+  which-key
+  yasnippet
+  zoom-window
+]
