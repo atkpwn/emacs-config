@@ -709,10 +709,14 @@ targets."
          ))
   (openwith-mode 1))
 
-(with-eval-after-load 'ispell
-  (when (executable-find ispell-program-name)
-    (add-hook 'text-mode-hook #'flyspell-mode)
-    (add-hook 'prog-mode-hook #'flyspell-prog-mode)))
+(use-package jinx
+  :bind
+  (("M-$"   . jinx-correct)
+   ("C-M-$" . jinx-languages))
+  :hook
+  (emacs-startup . global-jinx-mode)
+  :config
+  (setq jinx-languages "en_US de_DE"))
 
 (use-package treesit-fold
   :config
