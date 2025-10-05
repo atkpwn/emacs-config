@@ -20,6 +20,9 @@ in
 
       gcide
 
+      # org-roam-graph required dot
+      graphviz
+
       # required by epackages.dirvish
       ffmpegthumbnailer
       mediainfo
