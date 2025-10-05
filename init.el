@@ -716,7 +716,8 @@ targets."
   (("M-$"   . jinx-correct)
    ("C-M-$" . jinx-languages))
   :hook
-  (emacs-startup . global-jinx-mode)
+  (text-mode . jinx-mode)
+  (conf-mode . jinx-mode)
   :config
   (setq jinx-languages "en_US de_DE"))
 
