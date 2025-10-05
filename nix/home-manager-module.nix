@@ -48,6 +48,8 @@ in
           };
         in
           ''${pkgs.dict}/bin/dictd --pid-file ${config.home.homeDirectory}/.dictd.pid --logfile ${config.home.homeDirectory}/.dictd.log --config ${dictdConf}'';
+        # see https://unix.stackexchange.com/a/506374
+        Install.WantedBy = [ "default.target" ];
       };
     };
   };
