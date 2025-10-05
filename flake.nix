@@ -18,8 +18,6 @@
 
     packages.${system}.default = myEmacsWithPackages;
 
-    homeModules.emacs-with-env = import ./nix/home-manager-module.nix {
-      inherit pkgs myEmacsWithPackages;
-    };
+    homeModules.emacs-with-env = import ./nix/home-manager-module.nix myEmacsWithPackages;
   };
 }

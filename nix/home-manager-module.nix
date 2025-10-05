@@ -1,5 +1,9 @@
-{ pkgs, myEmacsWithPackages, ... }:
+myEmacsWithPackages:
+{ config, pkgs, ... }:
 
+let
+  gcide = pkgs.callPackage ./gcide.nix {};
+in
 {
   home = {
     sessionVariables = {
@@ -14,6 +18,8 @@
       hunspellDicts.en_US
       hunspellDicts.de_DE
 
+      gcide
+
       # required by epackages.dirvish
       ffmpegthumbnailer
       mediainfo
@@ -23,5 +29,23 @@
 
       direnv
     ];
+  };
+
+  systemd.user = {
+    enable = true;
+    services = {
+      dictd = {
+        Unit = {
+          Description = "Local dictionary server";
+        };
+        Service.Type = "forking"; # see https://superuser.com/a/1274913
+        Service.ExecStart = let
+          dictdConf = pkgs.replaceVars ./dictd.conf {
+            gcide = gcide;
+          };
+        in
+          ''${pkgs.dict}/bin/dictd --pid-file ${config.home.homeDirectory}/.dictd.pid --logfile ${config.home.homeDirectory}/.dictd.log --config ${dictdConf}'';
+      };
+    };
   };
 }

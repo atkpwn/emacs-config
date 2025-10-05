@@ -709,6 +709,8 @@ targets."
          ))
   (openwith-mode 1))
 
+(setq dictionary-server "localhost")
+
 (use-package jinx
   :bind
   (("M-$"   . jinx-correct)

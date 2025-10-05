@@ -797,6 +797,12 @@
        (openwith-mode 1))
    #+end_src
 
+** Dictionary
+    Take a look at [[https://www.masteringemacs.org/article/wordsmithing-in-emacs][this Mastering Emacs' article]]. The Webster's dictionary setup from [[https://mbork.pl/2017-01-14_I'm_now_using_the_right_dictionary][Marcin Borkowski's blog]].
+   #+begin_src emacs-lisp
+     (setq dictionary-server "localhost")
+   #+end_src
+
 ** Spell checking
    #+begin_src emacs-lisp
      (use-package jinx
