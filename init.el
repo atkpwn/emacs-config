@@ -780,7 +780,10 @@ targets."
 
 (use-package eldoc)
 
-(use-package eldoc-box)
+(use-package eldoc-box
+  :hook
+  ;; alternative: eldoc-box-hover-at-point-mode
+  (eglot-managed-mode . eldoc-box-hover-at-point-mode))
 
 (use-package markdown-mode) ;; required to display eldoc properly
 
@@ -911,7 +914,6 @@ targets."
   :hook
   (java-ts-mode . (lambda ()
                     (subword-mode)
-                    (eldoc-box-hover-at-point-mode)
                     (eglot-ensure)))
   :custom
   (eglot-report-progress nil) ;; get eglot to calm down
@@ -939,11 +941,8 @@ targets."
   ("\\.rs\\'"  . rust-ts-mode)
   :hook
   (rust-ts-mode . prettify-symbols-mode)
-  (rust-ts-mode . (lambda ()
-                    (eglot-ensure)
-                    (setq indent-tabs-mode nil)))
+  (rust-ts-mode . eglot-ensure)
   :config
-  (setq project-vc-extra-root-markers '(".project.el"))
   (setq rust-format-on-save t))
 
 (use-package cargo-mode
