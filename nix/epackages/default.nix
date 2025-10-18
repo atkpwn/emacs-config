@@ -10,7 +10,6 @@ in with epkgs; [
   auctex
   avy
   avy-zap
-  back-button
   blamer
   cargo-mode
   cider
@@ -30,6 +29,7 @@ in with epkgs; [
   diff-hl
   diffview
   diminish
+  direnv
   dirvish
   dockerfile-mode
   doom-modeline
@@ -89,6 +89,7 @@ in with epkgs; [
   vertico
   visual-fill-column
   which-key
+  x509-mode
   yasnippet
   zoom-window
 ]
