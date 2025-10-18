@@ -23,7 +23,7 @@ myEmacsWithPackages:
       # required by epackages.dirvish
       ffmpegthumbnailer
       mediainfo
-      poppler_utils
+      poppler-utils
       fd
       imagemagick
 
