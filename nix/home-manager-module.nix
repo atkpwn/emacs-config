@@ -1,15 +1,14 @@
 myEmacsWithPackages:
 { config, pkgs, ... }:
 
-let
-  gcide = pkgs.callPackage ./gcide.nix {};
-in
 {
   home = {
     sessionVariables = {
       EDITOR = "emacsclient";
     };
-    packages = with pkgs; [
+    packages = with pkgs; let
+      dictionaries = callPackage ./dictionaries.nix {};
+    in [
       myEmacsWithPackages
 
       nerd-fonts.jetbrains-mono
@@ -17,8 +16,6 @@ in
       nuspell
       hunspellDicts.en_US
       hunspellDicts.de_DE
-
-      gcide
 
       # org-roam-graph required dot
       graphviz
@@ -30,8 +27,10 @@ in
       fd
       imagemagick
 
+      # required by current java setup with lombok
       direnv
-    ];
+    ]
+    ++ dictionaries;
   };
 
   systemd.user = {
@@ -44,12 +43,14 @@ in
         Service.Type = "forking"; # see https://superuser.com/a/1274913
         Service.ExecStart = let
           dictdConf = pkgs.replaceVars ./dictd.conf {
-            gcide = gcide;
+            dictd = "${config.home.profileDirectory}/share/dictd";
           };
         in
-          ''${pkgs.dict}/bin/dictd --pid-file ${config.home.homeDirectory}/.dictd.pid --logfile ${config.home.homeDirectory}/.dictd.log --config ${dictdConf}'';
-        # see https://unix.stackexchange.com/a/506374
-        Install.WantedBy = [ "default.target" ];
+          ''${pkgs.dict}/bin/dictd \
+                --pid-file ${config.home.homeDirectory}/.dictd.pid \
+                --logfile ${config.home.homeDirectory}/.dictd.log \
+                --config ${dictdConf}'';
+        Install.WantedBy = [ "default.target" ]; # see https://unix.stackexchange.com/a/506374
       };
     };
   };
