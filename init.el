@@ -725,6 +725,8 @@ targets."
   :config
   (global-treesit-fold-mode))
 
+(use-package x509-mode)
+
 (use-package rg)
 
 (use-package unfill

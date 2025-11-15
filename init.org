@@ -823,6 +823,11 @@
        (global-treesit-fold-mode))
    #+end_src
 
+** Certificate
+   #+begin_src emacs-lisp
+     (use-package x509-mode)
+   #+end_src
+
 ** Others
    #+begin_src emacs-lisp
      (use-package rg)
