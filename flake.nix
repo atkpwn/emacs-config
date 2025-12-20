@@ -11,8 +11,8 @@
       inherit system;
     };
     epkgs = pkgs.callPackage ./nix/epackages {};
-    myEmacsWithPackages = import ./default.nix {
-      inherit pkgs epkgs;
+    myEmacsWithPackages = pkgs.callPackage ./default.nix {
+      epkgs = epkgs;
     };
   in {
 
