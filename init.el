@@ -665,6 +665,10 @@ targets."
   :custom
   (zoom-window-mode-line-color "#3a4a50"))
 
+(use-package direnv
+ :config
+ (direnv-mode))
+
 (use-package popper
   :bind
   (("C-`"     . popper-toggle)
