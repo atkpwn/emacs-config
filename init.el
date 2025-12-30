@@ -761,7 +761,9 @@ targets."
   (tab-always-indent 'complete)
   :init
   (global-corfu-mode)
-  (corfu-popupinfo-mode))
+  (corfu-popupinfo-mode)
+  :config
+  (set-face-background 'corfu-current "#11576a"))
 
 (use-package nerd-icons-corfu
   :custom
