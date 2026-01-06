@@ -21,11 +21,7 @@
   (defsubst emacs-path (path)
     (expand-file-name path user-emacs-directory))
 
-  (setq package-enable-at-startup nil
-        load-path
-        (append (list (emacs-path "use-package"))
-                (delete-dups load-path)
-                (list (emacs-path "lisp")))))
+  (setq package-enable-at-startup nil))
 
 ;; from readme
 (eval-when-compile
@@ -933,6 +929,7 @@ targets."
   (setq java-ts-mode-indent-offset 2))
 
 (use-package java-utils
+  :load-path "lisp"
   :bind
   (:map java-ts-mode-map
         ("C-c e n" . my/create-java-item)
@@ -1072,7 +1069,8 @@ targets."
   :mode
   "\\.lean'")
 
-(use-package personal)
+(use-package personal
+  :load-path "lisp")
 
 (setq mac-option-modifier 'none)
 (global-set-key "¥" 'revert-buffer)
