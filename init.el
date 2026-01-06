@@ -932,6 +932,12 @@ targets."
   (push '(java-mode . java-ts-mode) major-mode-remap-alist)
   (setq java-ts-mode-indent-offset 2))
 
+(use-package java-utils
+  :bind
+  (:map java-ts-mode-map
+        ("C-c e n" . my/create-java-item)
+        ("C-c e o" . my/toggle-java-test-and-source)))
+
 (use-package kotlin-mode
   :hook
   (kotlin-mode . eglot-ensure))
