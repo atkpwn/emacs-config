@@ -1066,58 +1066,7 @@ targets."
   :mode
   "\\.lean'")
 
-(use-package elfeed
-  :commands elfeed
-  :config
-  (setq elfeed-feeds
-        '(("https://allthingsdistributed.com/atom.xml" aws dev)
-          ("https://www.breakds.org/index.xml" nix c++ dev)
-          ("https://blog.alexellis.io/rss/" github dev)
-          ("https://blog.colinbreck.com/rss/" kubernetes dev)
-          ("https://corrode.dev/rss.xml" rust dev)
-
-          ("http://www.howardism.org/index.xml" emacs)
-          ("https://tsdh.org/rss.xml" emacs dev)
-          ("http://sachachua.com/blog/category/emacs-news/feed" emacs)
-          ("http://www.masteringemacs.org/feed" emacs)
-          ("http://emacsredux.com/atom.xml" emacs)
-          ("https://planet.emacslife.com/atom.xml" emacs)
-          ("https://karthinks.com/index.xml" emacs)
-          ("https://themkat.net/feed.xml" emacs dev)
-          ("https://cestlaz.github.io/rss.xml" emacs dev)
-
-          ("https://brandur.org/articles.atom" go database dev)
-          ("https://nipafx.dev/feed.xml" java dev)
-          ("https://vogella.com/blog/feed.xml" java dev)
-          ("https://belief-driven-design.com/posts/index.xml" java dev)
-          ("https://fzakaria.com/feed.xml" nix java dev)
-          ("https://joshaustin.tech/index.xml" java dev)
-
-          ("https://eclecticlight.co/mac-problem-solving/feed" macs dev)
-
-          ("https://www.tweag.io/rss.xml" nix dev)
-
-          ("https://waylonwalker.com/archive/rss.xml" tmux dev)
-          ("https://martinfowler.com/feed.atom" dev architecture)
-
-          ("https://lisyarus.github.io/blog/feed.xml" dev gamedev math)
-          ("https://highscalability.com/rss/" dev architecture)
-          ("https://jvns.ca/atom.xml" dev)
-          ("https://www.somkiat.cc/feed/" dev)
-          ("https://ayats.org/feed.xml" dev nix rust)
-          ("https://www.brendangregg.com/blog/rss.xml" dev system)
-          ("https://blog.cloudflare.com/rss" architecture network)
-          )))
-
-(use-package elfeed-webkit
-  :demand
-  :init
-  (setq elfeed-webkit-auto-tags '(webkit comics))
-  :config
-  (elfeed-webkit-auto-enable-by-tag)
-  :bind
-  (:map elfeed-show-mode-map
-        ("t" . elfeed-webkit-toggle)))
+(use-package personal)
 
 (setq mac-option-modifier 'none)
 (global-set-key "¥" 'revert-buffer)
