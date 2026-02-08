@@ -1072,7 +1072,7 @@ targets."
 (use-package personal
   :load-path "lisp")
 
-(setq mac-option-modifier 'none)
+(setq mac-command-modifier 'meta
+      mac-option-modifier  'none)
 (global-set-key "¥" 'revert-buffer)
-(setq mac-command-modifier 'meta)
 (global-unset-key (kbd "s-q"))
