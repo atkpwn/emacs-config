@@ -47,8 +47,8 @@ myEmacsWithPackages:
           };
         in
           ''${pkgs.dict}/bin/dictd \
-                --pid-file ${config.home.homeDirectory}/.dictd.pid \
-                --logfile ${config.home.homeDirectory}/.dictd.log \
+                --pid-file /run/user/$(id -u)/.dictd.pid \
+                --logfile ${config.home.homeDirectory}/.local/state/.dictd.log \
                 --config ${dictdConf}'';
         Install.WantedBy = [ "default.target" ]; # see https://unix.stackexchange.com/a/506374
       };
