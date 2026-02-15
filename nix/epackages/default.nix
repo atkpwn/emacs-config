@@ -74,6 +74,7 @@ in with epkgs; [
   perspective
   popper
   project-treemacs
+  protobuf-ts-mode
   rainbow-delimiters
   rg
   selected
