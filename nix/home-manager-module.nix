@@ -29,6 +29,25 @@ myEmacsWithPackages:
 
       # required by current java setup with lombok
       direnv
+
+      # language servers
+      dockerfile-language-server
+      cmake-language-server
+      nixd
+
+      (jdt-language-server.override {
+        jdk = javaPackages.compiler.openjdk25;
+      })
+      kotlin-language-server
+
+      gopls
+      protobuf-language-server
+      rust-analyzer
+
+      nodePackages.typescript-language-server
+      nodePackages.bash-language-server
+
+      helm-ls
     ]
     ++ dictionaries;
   };
@@ -45,11 +64,12 @@ myEmacsWithPackages:
           dictdConf = pkgs.replaceVars ./dictd.conf {
             dictd = "${config.home.profileDirectory}/share/dictd";
           };
-        in
-          ''${pkgs.dict}/bin/dictd \
+        in ''
+        ${pkgs.dict}/bin/dictd \
                 --pid-file /run/user/$(id -u)/.dictd.pid \
                 --logfile ${config.home.homeDirectory}/.local/state/.dictd.log \
-                --config ${dictdConf}'';
+                --config ${dictdConf}
+        '';
         Install.WantedBy = [ "default.target" ]; # see https://unix.stackexchange.com/a/506374
       };
     };
