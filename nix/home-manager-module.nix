@@ -1,5 +1,4 @@
-myEmacsWithPackages:
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   home = {
@@ -7,9 +6,12 @@ myEmacsWithPackages:
       EDITOR = "emacsclient";
     };
     packages = with pkgs; let
+      myEmacsWithPackages = callPackage ../default.nix {};
       dictionaries = callPackage ./dictionaries.nix {};
     in [
       myEmacsWithPackages
+
+      delta
 
       nerd-fonts.jetbrains-mono
 
@@ -52,7 +54,7 @@ myEmacsWithPackages:
     ++ dictionaries;
   };
 
-  systemd.user = {
+  systemd.user = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     enable = true;
     services = {
       dictd = {

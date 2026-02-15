@@ -6,18 +6,25 @@
   };
 
   outputs = { self, nixpkgs }: let
-    system = "x86_64-linux";
-    pkgs   =  import nixpkgs {
-      inherit system;
-    };
-    epkgs = pkgs.callPackage ./nix/epackages {};
-    myEmacsWithPackages = pkgs.callPackage ./default.nix {
-      epkgs = epkgs;
-    };
+    systems = [
+      "x86_64-linux"
+      "aarch64-darwin"
+    ];
+    forAllSystems = function:
+      nixpkgs.lib.genAttrs systems (system:
+        function (import nixpkgs {
+          inherit system;
+          overlays = [];
+        }));
   in {
 
-    packages.${system}.default = myEmacsWithPackages;
+    packages = forAllSystems (pkgs: {
+      default = pkgs.callPackage ./default.nix {};
+    });
 
-    homeModules.emacs-with-env = import ./nix/home-manager-module.nix myEmacsWithPackages;
+    homeModules = {
+      default = self.homeModules.emacs-with-env;
+      emacs-with-env = import ./nix/home-manager-module.nix;
+    };
   };
 }
