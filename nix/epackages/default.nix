@@ -44,6 +44,8 @@ in with epkgs; [
   expand-region
   flycheck-clojure
   flymake-ruff
+  gptel
+  gptel-magit
   helpful
   highlight-indentation
   jinx

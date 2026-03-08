@@ -1083,6 +1083,12 @@ targets."
   :mode
   "\\.lean'")
 
+(use-package gptel
+  :config
+  (gptel-make-gh-copilot "Copilot")
+  (setq gptel-model 'gpt-4o
+      gptel-backend (gptel-make-gh-copilot "Copilot")))
+
 (use-package personal
   :load-path "lisp")
 

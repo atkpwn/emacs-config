@@ -1288,6 +1288,15 @@
        "\\.lean'")
    #+end_src
 
+* Gptel
+  #+begin_src emacs-lisp
+    (use-package gptel
+      :config
+      (gptel-make-gh-copilot "Copilot")
+      (setq gptel-model 'gpt-4o
+          gptel-backend (gptel-make-gh-copilot "Copilot")))
+  #+end_src
+
 * Personal
   #+begin_src emacs-lisp
     (use-package personal
