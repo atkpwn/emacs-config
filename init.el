@@ -1047,7 +1047,8 @@ targets."
   (terraform-mode . eglot-ensure)
   (terraform-mode . outline-minor-mode))
 
-(use-package org-config)
+(use-package org-config
+  :load-path "lisp")
 
 (use-package citar
   :bind
