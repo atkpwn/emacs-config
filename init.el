@@ -112,6 +112,8 @@
 
   ;; disable UI dialog
   (setq use-dialog-box nil)
+
+  (setq-default line-spacing 0.2)
   )
 
 (use-package which-key
@@ -749,6 +751,7 @@ targets."
   :demand t
   :bind
   (:map eglot-mode-map
+        ("C-c e a"   . eglot-code-actions)
         ("C-c e f n" . flymake-goto-next-error)
         ("C-c e f p" . flymake-goto-prev-error)
         ("C-c e r"   . eglot-rename)
