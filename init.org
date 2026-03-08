@@ -1245,7 +1245,8 @@
 
 ** Org
    #+begin_src emacs-lisp
-     (use-package org-config)
+     (use-package org-config
+       :load-path "lisp")
    #+end_src
 
 *** Citar
