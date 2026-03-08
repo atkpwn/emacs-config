@@ -513,7 +513,6 @@ targets."
   :after (treemacs magit))
 
 (use-package treemacs-nerd-icons
-  :disabled
   :config
   (treemacs-load-theme "nerd-icons"))
 
@@ -522,6 +521,7 @@ targets."
   )
 
 (use-package dirvish
+  :disabled
   :init
   (dirvish-override-dired-mode)
   :custom
@@ -577,8 +577,18 @@ targets."
    ("M-j" . dirvish-fd-jump))
   )
 
+(use-package dired
+  :commands (dired dired-jump)
+  :bind
+  (:map dired-mode-map
+        ("C-j" . dired-find-file)))
+
 (use-package dired-x
-  :after dirvish)
+  :after dired)
+
+(use-package nerd-icons-dired
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
 
 (use-package yasnippet
   :demand
