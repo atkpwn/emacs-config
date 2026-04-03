@@ -787,8 +787,12 @@ targets."
         ("C-c e f"   . eglot-format))
   :config
   (defface eglot-highlight-symbol-face
-  '((t (:foreground "gold1" :inherit bold)))
-  "Face used to highlight the symbol at point."))
+    '((t (:foreground "gold1" :inherit bold)))
+    "Face used to highlight the symbol at point."))
+
+(cond
+ ((eq system-type 'darwin)
+  (add-to-list 'face-font-rescale-alist '("Apple Color Emoji" . 0.82))))
 
 (use-package corfu
   :custom

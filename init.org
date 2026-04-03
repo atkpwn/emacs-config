@@ -902,9 +902,17 @@
              ("C-c e f"   . eglot-format))
        :config
        (defface eglot-highlight-symbol-face
-       '((t (:foreground "gold1" :inherit bold)))
-       "Face used to highlight the symbol at point."))
+         '((t (:foreground "gold1" :inherit bold)))
+         "Face used to highlight the symbol at point."))
    #+end_src
+
+*** Fix emoji's height on macOS
+    Emoji 💡's height is higher than normal character causing its line grows because of =eglot-code-action-indicator=, see [[https://www.reddit.com/r/emacs/comments/1n3o2we/on_macos_in_gui_with_eglot_turned_on_when_the/][this comment]].
+    #+begin_src emacs-lisp
+      (cond
+       ((eq system-type 'darwin)
+        (add-to-list 'face-font-rescale-alist '("Apple Color Emoji" . 0.82))))
+    #+end_src
 
 ** Completion
    #+begin_src emacs-lisp
