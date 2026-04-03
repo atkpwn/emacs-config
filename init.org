@@ -166,7 +166,10 @@
                                   (internal-border-width . 2)))
       (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
       :config
-      (load-theme 'doom-tomorrow-night t))
+      ;; other alternatives: doom-badger, doom-rouge
+      (load-theme 'doom-sourcerer t)
+      (custom-set-faces
+       '(mode-line ((t (:background "#111111"))))))
 
     (use-package doom-modeline
       :init
