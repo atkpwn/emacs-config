@@ -95,8 +95,9 @@
       (setq next-screen-context-lines 7)
       (pixel-scroll-precision-mode)
 
-      (setq scroll-conservatively 10000
-            scroll-preserve-screen-position t)
+      (setq scroll-preserve-screen-position t
+            scroll-conservatively 15
+            scroll-margin 10)
 
       (if (boundp 'use-short-answers)
           (setq use-short-answers t)
