@@ -836,7 +836,7 @@ targets."
 (use-package eldoc-box
   :hook
   ;; alternative: eldoc-box-hover-at-point-mode
-  (eglot-managed-mode . eldoc-box-hover-at-point-mode))
+  (eglot-managed-mode . eldoc-box-hover-mode))
 
 (use-package markdown-mode) ;; required to display eldoc properly
 
