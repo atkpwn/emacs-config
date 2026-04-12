@@ -5,6 +5,6 @@ let
   then pkgs.emacs-gtk
   else pkgs.emacs-macport;
   emacsWithPackages = (pkgs.emacsPackagesFor myEmacs).emacsWithPackages;
-  epkgs = pkgs.callPackage ./nix/epackages {};
+  epkgs = pkgs.callPackage ./nix/epackages { };
 in
   emacsWithPackages epkgs

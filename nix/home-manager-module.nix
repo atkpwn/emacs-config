@@ -6,8 +6,8 @@
       EDITOR = "emacsclient";
     };
     packages = with pkgs; let
-      myEmacsWithPackages = callPackage ../default.nix {};
-      dictionaries = callPackage ./dictionaries.nix {};
+      myEmacsWithPackages = callPackage ../default.nix { };
+      dictionaries = callPackage ./dictionaries.nix { };
     in [
       myEmacsWithPackages
 

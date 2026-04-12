@@ -2,8 +2,12 @@
 
 epkgs:
 let
-  org-modern-indent = pkgs.callPackage ./org-modern-indent.nix { inherit epkgs; };
-  lean4-mode = pkgs.callPackage ./lean4-mode.nix { inherit epkgs; };
+  org-modern-indent = pkgs.callPackage ./org-modern-indent.nix {
+    inherit epkgs;
+  };
+  lean4-mode = pkgs.callPackage ./lean4-mode.nix {
+    inherit epkgs;
+  };
 in with epkgs; [
   ace-window
   aggressive-indent
@@ -52,6 +56,7 @@ in with epkgs; [
   jq-format
   kotlin-mode
   lean4-mode
+  ligature
   magit
   magit-delta
   marginalia
