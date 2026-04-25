@@ -44,7 +44,7 @@
 
       gopls
       protobuf-language-server
-      rust-analyzer
+      # rust-analyzer # install rustup in home-manager instead
 
       typescript-language-server
       bash-language-server
