@@ -46,8 +46,8 @@
       protobuf-language-server
       rust-analyzer
 
-      nodePackages.typescript-language-server
-      nodePackages.bash-language-server
+      typescript-language-server
+      bash-language-server
 
       helm-ls
     ]
