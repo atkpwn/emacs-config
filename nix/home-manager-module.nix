@@ -46,6 +46,10 @@
       protobuf-language-server
       # rust-analyzer # install rustup in home-manager instead
 
+      rassumfrassum
+      ruff
+      ty
+
       typescript-language-server
       bash-language-server
 

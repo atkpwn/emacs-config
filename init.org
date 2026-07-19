@@ -1065,11 +1065,14 @@
        :hook
        (python-ts-mode . (lambda ()
                            (eldoc-mode)
-                           (eglot-ensure)))
+                           (eglot-ensure)
+                           (add-hook 'after-save-hook 'eglot-format nil t)))
        :custom
        (python-indent-guess-indent-offset-verbose nil)
        :config
-       (push '(python-mode . python-ts-mode) major-mode-remap-alist))
+       (push '(python-mode . python-ts-mode) major-mode-remap-alist)
+       (add-to-list 'eglot-server-programs
+                    '((python-base-mode :language-id "python") . ("rass" "python"))))
 
      (use-package flymake-ruff
        :disabled ;; TODO: 2025-08-04 pylsp provide better code completion
