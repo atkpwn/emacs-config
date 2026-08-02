@@ -80,4 +80,22 @@
       };
     };
   };
+
+  programs = {
+    zsh = {
+      initContent = lib.mkOrder 1200 ''
+        function m() {
+          emacsclient -ne "(man \"$1\")";
+        }
+
+        function magit() {
+          local PROJECT=$(git rev-parse --show-toplevel 2> /dev/null)
+          emacsclient -ne "(progn
+            (persp-switch \"''${1:-$(basename $PROJECT)}\")
+            (find-file \"$PROJECT\")
+            (magit-status))"
+        }
+      '';
+    };
+  };
 }
