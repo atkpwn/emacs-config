@@ -1,6 +1,9 @@
 { config, pkgs, lib, ... }:
 
-{
+let
+  inherit (pkgs.stdenv) hostPlatform;
+  home = config.home.homeDirectory;
+in {
   home = {
     sessionVariables = {
       EDITOR = "emacsclient";
@@ -58,7 +61,7 @@
     ++ dictionaries;
   };
 
-  systemd.user = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+  systemd.user = lib.mkIf hostPlatform.isLinux {
     enable = true;
     services = {
       dictd = {
@@ -73,7 +76,7 @@
         in ''
         ${pkgs.dict}/bin/dictd \
                 --pid-file /run/user/$(id -u)/.dictd.pid \
-                --logfile ${config.home.homeDirectory}/.local/state/.dictd.log \
+                --logfile ${home}/.local/state/.dictd.log \
                 --config ${dictdConf}
         '';
         Install.WantedBy = [ "default.target" ]; # see https://unix.stackexchange.com/a/506374
@@ -96,6 +99,19 @@
             (magit-status))"
         }
       '';
+      shellAliases = {
+        dired = ''
+          (
+            DIR=''${''${PWD##*/}:-/}
+            emacsclient -ne "(progn
+              (persp-switch \"$DIR\")
+              (find-file \"$PWD\"))"
+          )
+        '';
+        e = "emacsclient";
+      } // lib.optionalAttrs hostPlatform.isDarwin {
+        emacs = ''open "${home}/Applications/Home Manager Apps/Emacs.app"'';
+      };
     };
   };
 }
