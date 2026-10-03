@@ -929,15 +929,6 @@ targets."
   (add-to-list 'eglot-server-programs
                '((python-base-mode :language-id "python") . ("rass" "python"))))
 
-(use-package flymake-ruff
-  :disabled ;; TODO: 2025-08-04 pylsp provide better code completion
-  :hook
-  (python-ts-mode . flymake-ruff-load)
-  :config
-  (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs
-                 '(python-mode . ("ruff" "server")))
-    (add-hook 'after-save-hook 'eglot-format)))
 
 (use-package cmake-ts-mode
   :mode ("CMakeLists.txt" "\\.cmake\\'")
