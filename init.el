@@ -765,6 +765,13 @@ targets."
   (setq jinx-languages "en_US de_DE"))
 
 (use-package treesit-fold
+  :demand t
+  :bind
+  (:map treesit-fold-mode-map
+        ("C-c z"     . treesit-fold-toggle)
+        ("C-c @ C-a" . treesit-fold-open-all)
+        ("C-c @ C-t" . treesit-fold-close-all)
+        ("C-c @ C-o" . treesit-fold-open-recursively))
   :config
   (global-treesit-fold-mode))
 
@@ -784,7 +791,7 @@ targets."
         ("C-c e f n" . flymake-goto-next-error)
         ("C-c e f p" . flymake-goto-prev-error)
         ("C-c e r"   . eglot-rename)
-        ("C-c e f"   . eglot-format))
+        ("C-c e F"   . eglot-format))
   :config
   (defface eglot-highlight-symbol-face
     '((t (:foreground "gold1" :inherit bold)))
