@@ -794,6 +794,8 @@ targets."
  ((eq system-type 'darwin)
   (add-to-list 'face-font-rescale-alist '("Apple Color Emoji" . 0.82))))
 
+(use-package dape)
+
 (use-package corfu
   :custom
   (corfu-cycle t)

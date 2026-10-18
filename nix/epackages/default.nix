@@ -27,6 +27,7 @@ in with epkgs; [
   consult-eglot
   consult-project-extra
   corfu
+  dape
   dashboard
   deno-ts-mode
   devdocs

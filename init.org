@@ -914,6 +914,11 @@
         (add-to-list 'face-font-rescale-alist '("Apple Color Emoji" . 0.82))))
     #+end_src
 
+** Dape
+   #+begin_src emacs-lisp
+     (use-package dape)
+   #+end_src
+
 ** Completion
    #+begin_src emacs-lisp
      (use-package corfu
