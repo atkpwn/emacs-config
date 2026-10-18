@@ -1076,30 +1076,81 @@
    #+end_src
 
 ** C/C++
-   #+begin_src emacs-lisp
-     (use-package cmake-ts-mode
-       :mode ("CMakeLists.txt" "\\.cmake\\'")
-       :hook
-       (cmake-ts-mode . eglot-ensure))
+*** Eglot contact
+    - Project root has =flake.nix= - run =clangd= inside =nix develop=, so it sees the toolchain and
+      headers of the dev shell.
+    - Else - use the Eglot default servers (=clangd= or =ccls=).
 
-     (use-package cmake-font-lock
-       :hook
-       (cmake-mode . cmake-font-lock-activate))
+    #+begin_src emacs-lisp
+      (defvar atkpwn/eglot-c-default-contact nil
+        "Eglot default contact for C/C++ modes, saved before we override it.")
 
-     (use-package c-ts-mode
-       :hook
-       ((c-ts-mode c++-ts-mode) . (lambda ()
-                                    (eglot-ensure)
-                                    (setq-local cpp-format-on-save-p t)
-                                    (add-hook 'before-save-hook #'cpp-format nil t)))
-       :config
-       (push '(c-mode . c-ts-mode) major-mode-remap-alist)
-       (push '(c++-mode . c++-ts-mode) major-mode-remap-alist)
-       (push '(c-or-c++-mode . c-or-c++-ts-mode) major-mode-remap-alist)
-       (defun cpp-format ()
-         (if cpp-format-on-save-p
-             (eglot-format-buffer))))
-   #+end_src
+      (defun atkpwn/eglot-c-call-default-contact (interactive project)
+        "Resolve `atkpwn/eglot-c-default-contact' like Eglot does."
+        (let ((contact atkpwn/eglot-c-default-contact))
+          (if (functionp contact)
+              (pcase (cdr (func-arity contact))
+                (1 (funcall contact interactive))
+                (_ (funcall contact interactive project)))
+            contact)))
+
+      (defun atkpwn/eglot-c-contact (interactive project)
+        "Run clangd with `nix develop' in a Nix flake project.
+      Else fall back to the default Eglot C/C++ servers."
+        (let ((root (and project (expand-file-name (project-root project)))))
+          (if (and root
+                   (not (file-remote-p root))
+                   (file-exists-p (expand-file-name "flake.nix" root))
+                   (executable-find "nix"))
+              `("nix" "develop" ,root "--command" "clangd")
+            (atkpwn/eglot-c-call-default-contact interactive project))))
+
+      (with-eval-after-load 'eglot
+        ;; Save the default entry first. Skip our own entry, so that a
+        ;; re-evaluation of this block can not make the fallback recurse.
+        (let ((default (cdr (seq-find (lambda (entry)
+                                        (memq 'c-ts-mode (ensure-list (car entry))))
+                                      eglot-server-programs))))
+          (unless (eq default 'atkpwn/eglot-c-contact)
+            (setq atkpwn/eglot-c-default-contact default)))
+        (add-to-list 'eglot-server-programs
+                     '((c-mode c-ts-mode c++-mode c++-ts-mode objc-mode)
+                       . atkpwn/eglot-c-contact)))
+    #+end_src
+
+*** Basic
+    #+begin_src emacs-lisp
+      (use-package cmake-ts-mode
+        :mode ("CMakeLists.txt" "\\.cmake\\'")
+        :hook
+        (cmake-ts-mode . eglot-ensure))
+
+      (use-package cmake-font-lock
+        :hook
+        (cmake-mode . cmake-font-lock-activate))
+
+      (use-package c-ts-mode
+        :hook
+        ((c-ts-mode c++-ts-mode) . (lambda ()
+                                     (eglot-ensure)
+                                     (setq-local cpp-format-on-save-p t)
+                                     (add-hook 'before-save-hook #'cpp-format nil t)))
+        :config
+        (push '(c-mode . c-ts-mode) major-mode-remap-alist)
+        (push '(c++-mode . c++-ts-mode) major-mode-remap-alist)
+        (push '(c-or-c++-mode . c-or-c++-ts-mode) major-mode-remap-alist)
+        (defun cpp-format ()
+          (if cpp-format-on-save-p
+              (eglot-format-buffer))))
+    #+end_src
+
+*** Local
+    Create =.dir-locals.el= in the project root with the following:
+    #+begin_src emacs-lisp :tangle no
+      ((nil . ((eglot-server-programs
+                   . (((c-mode c++-mode c-ts-mode c++-ts-mode)
+                       . ("nix" "develop" "--command" "clangd")))))))
+    #+end_src
 
 ** Java
    My eglot setup mainly follows Skybert Hacks' [[https://youtu.be/fd7xcTG5Z_s][video]].

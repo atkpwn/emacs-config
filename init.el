@@ -929,6 +929,40 @@ targets."
   (add-to-list 'eglot-server-programs
                '((python-base-mode :language-id "python") . ("rass" "python"))))
 
+(defvar atkpwn/eglot-c-default-contact nil
+  "Eglot default contact for C/C++ modes, saved before we override it.")
+
+(defun atkpwn/eglot-c-call-default-contact (interactive project)
+  "Resolve `atkpwn/eglot-c-default-contact' like Eglot does."
+  (let ((contact atkpwn/eglot-c-default-contact))
+    (if (functionp contact)
+        (pcase (cdr (func-arity contact))
+          (1 (funcall contact interactive))
+          (_ (funcall contact interactive project)))
+      contact)))
+
+(defun atkpwn/eglot-c-contact (interactive project)
+  "Run clangd with `nix develop' in a Nix flake project.
+Else fall back to the default Eglot C/C++ servers."
+  (let ((root (and project (expand-file-name (project-root project)))))
+    (if (and root
+             (not (file-remote-p root))
+             (file-exists-p (expand-file-name "flake.nix" root))
+             (executable-find "nix"))
+        `("nix" "develop" ,root "--command" "clangd")
+      (atkpwn/eglot-c-call-default-contact interactive project))))
+
+(with-eval-after-load 'eglot
+  ;; Save the default entry first. Skip our own entry, so that a
+  ;; re-evaluation of this block can not make the fallback recurse.
+  (let ((default (cdr (seq-find (lambda (entry)
+                                  (memq 'c-ts-mode (ensure-list (car entry))))
+                                eglot-server-programs))))
+    (unless (eq default 'atkpwn/eglot-c-contact)
+      (setq atkpwn/eglot-c-default-contact default)))
+  (add-to-list 'eglot-server-programs
+               '((c-mode c-ts-mode c++-mode c++-ts-mode objc-mode)
+                 . atkpwn/eglot-c-contact)))
 
 (use-package cmake-ts-mode
   :mode ("CMakeLists.txt" "\\.cmake\\'")
