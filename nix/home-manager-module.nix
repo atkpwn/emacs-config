@@ -40,9 +40,7 @@ in {
       cmake-language-server
       nixd
 
-      (jdt-language-server.override {
-        jdk = javaPackages.compiler.openjdk25;
-      })
+      jdt-language-server
       kotlin-language-server
 
       gopls
