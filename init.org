@@ -120,14 +120,17 @@
                                   (invert-face 'mode-line)
                                   (run-with-timer 0.1 nil #'invert-face 'mode-line)))
 
-      ;; undo-tree
-      (global-undo-tree-mode)
-
       ;; disable UI dialog
       (setq use-dialog-box nil)
 
       (setq-default line-spacing 0.2)
       )
+  #+end_src
+
+  #+begin_src emacs-lisp
+    (use-package undo-tree
+     :init
+     (global-undo-tree-mode))
   #+end_src
 
   #+begin_src emacs-lisp

@@ -108,14 +108,15 @@
                               (invert-face 'mode-line)
                               (run-with-timer 0.1 nil #'invert-face 'mode-line)))
 
-  ;; undo-tree
-  (global-undo-tree-mode)
-
   ;; disable UI dialog
   (setq use-dialog-box nil)
 
   (setq-default line-spacing 0.2)
   )
+
+(use-package undo-tree
+ :init
+ (global-undo-tree-mode))
 
 (use-package which-key
   :demand t
