@@ -3,13 +3,19 @@
 let
   inherit (pkgs.stdenv) hostPlatform;
   home = config.home.homeDirectory;
+  myEmacsWithPackages = pkgs.callPackage ../default.nix { };
 in {
+  nixpkgs.overlays = [
+    (final: prev: {
+      myEmacsWithPackages = myEmacsWithPackages;
+    })
+  ];
+
   home = {
     sessionVariables = {
       EDITOR = "emacsclient";
     };
     packages = with pkgs; let
-      myEmacsWithPackages = callPackage ../default.nix { };
       dictionaries = callPackage ./dictionaries.nix { };
     in [
       myEmacsWithPackages
