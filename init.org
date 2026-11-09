@@ -1159,6 +1159,45 @@
               (eglot-format-buffer))))
     #+end_src
 
+*** Format on RET with clang-format
+    On RET, Eglot sends =textDocument/onTypeFormatting= to clangd. Clangd runs clang-format (with
+    the project =.clang-format=) on the previous line and indents the new line. After that,
+    =electric-indent-mode= indents both lines again with the =c-ts-mode= rules (GNU style). This
+    undoes the clang-format result, for example it moves =case= labels out.
+
+    #+begin_example
+      RET -> newline -> post-self-insert-hook
+                          |- eglot (local)    : clangd onTypeFormatting = clang-format
+                          `- electric-indent  : c-ts-mode GNU indent   <- remove this
+    #+end_example
+
+    - When the server supports on-type formatting - turn off =electric-indent-mode= in the
+      buffer, so clang-format is the only formatter on RET. Clangd puts point before the new
+      indentation, so move point past it.
+    - When Eglot stops - go back to the default =electric-indent-mode=.
+
+    #+begin_src emacs-lisp
+      (defun atkpwn/c-skip-new-indentation ()
+        "Move point past the indentation that clangd adds after RET."
+        (when (and (eq last-command-event ?\n)
+                   (looking-at-p "[ \t]")
+                   (save-excursion (skip-chars-backward " \t") (bolp)))
+          (skip-chars-forward " \t")))
+
+      (defun atkpwn/c-use-clangd-on-type-format ()
+        "Use clangd on-type formatting (clang-format) for RET in C/C++ buffers."
+        (when (derived-mode-p 'c-ts-base-mode)
+          (if (and (eglot-managed-p)
+                   (eglot-server-capable :documentOnTypeFormattingProvider))
+              (progn
+                (electric-indent-local-mode -1)
+                (add-hook 'post-self-insert-hook #'atkpwn/c-skip-new-indentation 90 t))
+            (kill-local-variable 'electric-indent-mode)
+            (remove-hook 'post-self-insert-hook #'atkpwn/c-skip-new-indentation t))))
+
+      (add-hook 'eglot-managed-mode-hook #'atkpwn/c-use-clangd-on-type-format)
+    #+end_src
+
 *** Local
     Create =.dir-locals.el= in the project root with the following:
     #+begin_src emacs-lisp :tangle no

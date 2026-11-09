@@ -997,6 +997,26 @@ Else fall back to the default Eglot C/C++ servers."
     (if cpp-format-on-save-p
         (eglot-format-buffer))))
 
+(defun atkpwn/c-skip-new-indentation ()
+  "Move point past the indentation that clangd adds after RET."
+  (when (and (eq last-command-event ?\n)
+             (looking-at-p "[ \t]")
+             (save-excursion (skip-chars-backward " \t") (bolp)))
+    (skip-chars-forward " \t")))
+
+(defun atkpwn/c-use-clangd-on-type-format ()
+  "Use clangd on-type formatting (clang-format) for RET in C/C++ buffers."
+  (when (derived-mode-p 'c-ts-base-mode)
+    (if (and (eglot-managed-p)
+             (eglot-server-capable :documentOnTypeFormattingProvider))
+        (progn
+          (electric-indent-local-mode -1)
+          (add-hook 'post-self-insert-hook #'atkpwn/c-skip-new-indentation 90 t))
+      (kill-local-variable 'electric-indent-mode)
+      (remove-hook 'post-self-insert-hook #'atkpwn/c-skip-new-indentation t))))
+
+(add-hook 'eglot-managed-mode-hook #'atkpwn/c-use-clangd-on-type-format)
+
 (use-package envrc
   :hook
   (after-init . envrc-global-mode))
