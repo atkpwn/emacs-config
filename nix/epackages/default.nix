@@ -49,6 +49,7 @@ in with epkgs; [
   expand-region
   flycheck-clojure
   flymake-ruff
+  ghostel
   gptel
   gptel-magit
   helpful
@@ -58,6 +59,7 @@ in with epkgs; [
   kotlin-mode
   lean4-mode
   ligature
+  lua-mode
   magit
   magit-delta
   marginalia
@@ -87,6 +89,7 @@ in with epkgs; [
   rg
   selected
   shfmt
+  terraform-mode
   treemacs
   treemacs-magit
   treemacs-nerd-icons
